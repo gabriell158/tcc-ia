@@ -1,14 +1,34 @@
 import pandas as pd
 def rawData(gender, marital, university, ocupation, children, class_dep, class_anx, class_str, age, grad_period, num_cols, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21):
 
-    cat_cols = pd.DataFrame({'Gender': [gender], 'Marital_Status': [marital], 'University': [university], 'Ocupation': [ocupation], 'Children': [children], 'Classify_Dep': [class_dep], 'Classify_Anx': [class_anx], 'Classify_Str': [class_str]})
-
-    num_cols = pd.DataFrame({'Age': [age], 'Grad_Period': [grad_period]})
-
+    cat_cols = catCols(gender, marital, university, ocupation)
+    num_cols = numCols(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
+    dass_cols = dassCols(class_dep, class_anx, class_str)
     rawdata = cat_cols.join(num_cols, how = 'left')
+    rawData = rawData.join(dass_cols, how = 'left')
     rawdata['Age'] =  rawdata['Age'].fillna(0)
     rawdata['Grad_Period'] =  rawdata['Grad_Period'].fillna(0)
-
+    rawdata['S1'] =  rawdata['S1'].fillna(0)
+    rawdata['A2'] =  rawdata['A2'].fillna(0)
+    rawdata['D3'] =  rawdata['D3'].fillna(0)
+    rawdata['A4'] =  rawdata['A4'].fillna(0)
+    rawdata['D5'] =  rawdata['D5'].fillna(0)
+    rawdata['S6'] =  rawdata['S6'].fillna(0)
+    rawdata['A7'] =  rawdata['A7'].fillna(0)
+    rawdata['S8'] =  rawdata['S8'].fillna(0)
+    rawdata['A9'] =  rawdata['A9'].fillna(0)
+    rawdata['D10'] =  rawdata['D10'].fillna(0)
+    rawdata['S11'] =  rawdata['S11'].fillna(0)
+    rawdata['S12'] =  rawdata['S12'].fillna(0)
+    rawdata['D13'] =  rawdata['D13'].fillna(0)
+    rawdata['S14'] =  rawdata['S14'].fillna(0)
+    rawdata['A15'] =  rawdata['A15'].fillna(0)
+    rawdata['D16'] =  rawdata['D16'].fillna(0)
+    rawdata['D17'] =  rawdata['D17'].fillna(0)
+    rawdata['S18'] =  rawdata['S18'].fillna(0)
+    rawdata['A19'] =  rawdata['A19'].fillna(0)
+    rawdata['A20'] =  rawdata['A20'].fillna(0)
+    rawdata['D21'] =  rawdata['D21'].fillna(0)
     return rawdata
 
 def numCols(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21):
@@ -16,7 +36,7 @@ def numCols(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12,
     return num_cols
 
 def catCols(gender, marital, university, ocupation):
-    cat_cols = pd.DataFrame({'Gender': [gender], 'Marital_Status': [marital], 'University': [university], 'Ocupation': [ocupation], 'Children': [children], 'Classify_Dep': [class_dep], 'Classify_Anx': [class_anx], 'Classify_Str': [class_str]})
+    cat_cols = pd.DataFrame({'Gender': [gender], 'Marital_Status': [marital], 'University': [university], 'Ocupation': [ocupation]})
 
     return cat_cols
 
