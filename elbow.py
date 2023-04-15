@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-
 def metodo_cotovelo():
     distorcoes = []
     norm_data = normalize()
