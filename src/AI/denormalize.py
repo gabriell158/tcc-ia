@@ -1,16 +1,9 @@
 import pandas as pd
 from pickle import load
-
-from src.AI.normalize import normalize, numNormalize, catNormalize
-from src.AI.raw_data import catCols
-from src.AI.centroids import getCentroids
 from src.AI.dass_sum import classify_anxscore, classify_depscore, classify_strscore
 
-def denormalize():
-    dados_kmeans_model = getCentroids()
-    dados_norm = normalize()
-    colunas_cat_norm = catNormalize()
-    colunas_cat = catCols()
+def denormalize(dados_kmeans_model, dados_norm, colunas_cat_norm, colunas_cat, num_normalize):
+    
 
     cluster_data=pd.DataFrame(dados_kmeans_model.cluster_centers_, columns=dados_norm.columns)
     cluster_cat_data = cluster_data[colunas_cat_norm.columns].round(0).abs().astype(int)==1
@@ -33,7 +26,6 @@ def denormalize():
             cluster_desc[c] = str(cluster[c].values[0])
     clusters_description=clusters_description.append(cluster_desc, ignore_index=True)
 
-    num_normalize = numNormalize()
     cluster_data=pd.DataFrame(dados_kmeans_model.cluster_centers_, columns=dados_norm.columns)
 
     dados_normalizer = load(open('/content/num_normalizer.model', 'rb'))

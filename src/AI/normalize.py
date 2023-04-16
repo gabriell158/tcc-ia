@@ -1,19 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from pickle import dump
-from src.AI.raw_data import catCols, numCols
 
-def normalize():
-    cat_cols = catCols()
-    num_cols = numCols()
-    cat_normalize = pd.get_dummies(cat_cols)
-    f = open('cat_normal_definition.model', 'w')
-    f.write(','.join(str(s) for s in cat_normalize.columns.values.tolist()))
-    f.close()
-    
-    scaler = MinMaxScaler()
-    num_normalize = scaler.fit_transform(num_cols)
-    dump(num_normalize,open('num_normalizer.model', 'wb'))
+def normalize(num_cols, num_normalize, cat_normalize):
 
     num_normalize = pd.DataFrame(num_normalize, columns=num_cols.columns)
     normalize_data = cat_normalize.join(num_normalize, how = 'left')
@@ -44,14 +33,15 @@ def normalize():
     return normalize_data
 
 
-def numNormalize():
-    num_cols = numCols()
+def numNormalize(num_cols):
     scaler = MinMaxScaler()
     num_normalize = scaler.fit_transform(num_cols)
+    dump(num_normalize,open('num_normalizer.model', 'wb'))
     return num_normalize
 
-def catNormalize():
-    cat_cols = catCols()
+def catNormalize(cat_cols):
     cat_normalize = pd.get_dummies(cat_cols)
-
+    f = open('cat_normal_definition.model', 'w')
+    f.write(','.join(str(s) for s in cat_normalize.columns.values.tolist()))
+    f.close()
     return cat_normalize

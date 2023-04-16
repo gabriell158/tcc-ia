@@ -3,7 +3,6 @@ from pickle import load
 
 from src.AI.raw_data import catCols, numCols
 
-
 def cluster_infer(
     gender = '',
     marital_status = '',

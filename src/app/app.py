@@ -1,11 +1,11 @@
 from flask import Flask, request
-
+#from src.AI.train import train
 app = Flask(__name__)
 
 @app.route("/model",methods=["POST","GET"])
 def model1():
   if request.method == "POST":
-    # treinar um novo modelo
+    print(request)
     return
   if request.method == "GET":
     # listar os modelos treinados

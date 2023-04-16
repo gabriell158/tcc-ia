@@ -1,24 +1,19 @@
 from sklearn.cluster import KMeans
-from src.AI.normalize import normalize
-from src.AI.raw_data import rawData
-
 from scipy.spatial.distance import cdist
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-def metodo_cotovelo():
+def elbow_method(norm_data, raw_data):
     distorcoes = []
-    norm_data = normalize()
-    raw_data = rawData()
     K = range(1,39)
+    kmeans_models = {}
     for k in K:
-        kmeans_model = KMeans(n_clusters=k, random_state=42).fit(norm_data)
+        kmeans_models[k] = KMeans(n_clusters=k, random_state=42).fit(norm_data)
         distorcoes.append(
             sum(np.min(cdist(
-            norm_data,kmeans_model.cluster_centers_,'euclidean'), axis =1)/raw_data.shape[0])
+            norm_data,kmeans_models[k].cluster_centers_,'euclidean'), axis =1)/raw_data.shape[0])
   )
-
     fig, ax = plt.subplots()
     ax.plot(K, distorcoes)
     ax.set(xlabel = 'n Clusters', ylabel = 'Distorcao', title = 'Elbow Method')
@@ -42,4 +37,4 @@ def metodo_cotovelo():
 
     #maior distância
     n_clusters_otimo =K[distancias.index(np.max(distancias))]
-    return n_clusters_otimo
+    return kmeans_models[n_clusters_otimo]
