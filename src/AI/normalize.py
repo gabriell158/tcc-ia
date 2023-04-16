@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from pickle import dump
-from raw_data import catCols, numCols
+from src.AI.raw_data import catCols, numCols
 
 def normalize():
     cat_cols = catCols()

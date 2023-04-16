@@ -1,10 +1,10 @@
 import pandas as pd
 from pickle import load
 
-from normalize import normalize, numNormalize, catNormalize
-from raw_data import catCols, numCols
-from centroids import getCentroids
-from new_student import cluster_infer
+from src.AI.normalize import normalize, numNormalize, catNormalize
+from src.AI.raw_data import catCols, numCols
+from src.AI.centroids import getCentroids
+from src.AI.new_student import cluster_infer
 
 def denormalize():
     dados_kmeans_model = getCentroids()

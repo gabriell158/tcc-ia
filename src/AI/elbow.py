@@ -1,6 +1,6 @@
 from sklearn.cluster import KMeans
-from normalize import normalize
-from raw_data import rawData
+from src.AI.normalize import normalize
+from src.AI.raw_data import rawData
 
 from scipy.spatial.distance import cdist
 import numpy as np

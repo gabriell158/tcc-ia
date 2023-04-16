@@ -1,7 +1,7 @@
 import pandas as pd
 from pickle import load
 
-from raw_data import catCols, numCols
+from src.AI.raw_data import catCols, numCols
 
 
 def cluster_infer(
