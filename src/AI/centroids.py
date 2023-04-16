@@ -1,6 +1,6 @@
 from sklearn.cluster import KMeans
-from normalize import normalize
-from elbow import metodo_cotovelo
+from src.AI.normalize import normalize
+from src.AI.elbow import metodo_cotovelo
 from pickle import  dump
 import pandas as pd
 def getCentroids():

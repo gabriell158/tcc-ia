@@ -1,11 +1,12 @@
 import pandas as pd
+
 def rawData(gender, marital, university, ocupation, children, class_dep, class_anx, class_str, age, grad_period, num_cols, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21):
 
     cat_cols = catCols(gender, marital, university, ocupation)
     num_cols = numCols(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
     dass_cols = dassCols(class_dep, class_anx, class_str)
     rawdata = cat_cols.join(num_cols, how = 'left')
-    rawData = rawData.join(dass_cols, how = 'left')
+    rawdata = rawdata.join(dass_cols, how = 'left')
     rawdata['Age'] =  rawdata['Age'].fillna(0)
     rawdata['Grad_Period'] =  rawdata['Grad_Period'].fillna(0)
     rawdata['S1'] =  rawdata['S1'].fillna(0)

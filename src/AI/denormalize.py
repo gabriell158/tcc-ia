@@ -1,10 +1,11 @@
 import pandas as pd
 from pickle import load
 
-from normalize import normalize, numNormalize, catNormalize
-from raw_data import catCols
-from centroids import getCentroids
-from dass_sum import classify_anxscore, classify_depscore, classify_strscore
+from src.AI.normalize import normalize, numNormalize, catNormalize
+from src.AI.raw_data import catCols
+from src.AI.centroids import getCentroids
+from src.AI.dass_sum import classify_anxscore, classify_depscore, classify_strscore
+
 def denormalize():
     dados_kmeans_model = getCentroids()
     dados_norm = normalize()
