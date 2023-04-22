@@ -37,12 +37,11 @@ def numNormalize(num_cols):
     scaler = MinMaxScaler()
     numerico = scaler.fit(num_cols)
     num_normalize = scaler.fit_transform(num_cols)
-    dump(numerico,open('num_normalizer.model', 'wb'))
-    return num_normalize
+    return num_normalize, numerico
 
 def catNormalize(cat_cols):
     cat_normalize = pd.get_dummies(cat_cols, prefix_sep = '&')
-    f = open('cat_normal_definition.model', 'w')
-    f.write(','.join(str(s) for s in cat_normalize.columns.values.tolist()))
-    f.close()
+    # f = open('cat_normal_definition.model', 'w')
+    # f.write(','.join(str(s) for s in cat_normalize.columns.values.tolist()))
+    # f.close()
     return cat_normalize

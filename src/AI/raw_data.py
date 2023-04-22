@@ -2,7 +2,6 @@ import pandas as pd
 
 def rawData(cat_cols, num_cols):
     rawdata = cat_cols.join(num_cols, how = 'left')
-    #rawdata = rawdata.join(dass_cols, how = 'left')
     rawdata['Age'] =  rawdata['Age'].fillna(0)
     rawdata['Grad_Period'] =  rawdata['Grad_Period'].fillna(0)
     rawdata['S1'] =  rawdata['S1'].fillna(0)

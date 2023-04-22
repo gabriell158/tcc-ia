@@ -1,5 +1,3 @@
-import pandas as pd
-
 def duplicated(df):
     df.columns = ['Stamp', 'Email', 'Terms', 'Age', 'Gender', 'Marital_Status', 'Dob', 'University', 'Course', 'Grad_Period', 'Ocupation', 'Children', 'S1', 'A2', 'D3', 'A4', 'D5', 'S6', 'A7', 'S8', 'A9', 'D10', 'S11', 'S12', 'D13', 'S14', 'A15', 'D16', 'D17', 'S18', 'A19', 'A20', 'D21']
 
