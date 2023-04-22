@@ -8,18 +8,14 @@ def elbow_method(norm_data, raw_data):
     distorcoes = []
     K = range(1,39)
     kmeans_models = {}
+    shape = raw_data.shape[0]
+    norm_data = norm_data.astype(float)
     for k in K:
         kmeans_models[k] = KMeans(n_clusters=k, random_state=42).fit(norm_data)
-        distorcoes.append(
-            sum(np.min(cdist(
-            norm_data,kmeans_models[k].cluster_centers_,'euclidean'), axis =1)/raw_data.shape[0])
-  )
-    fig, ax = plt.subplots()
-    ax.plot(K, distorcoes)
-    ax.set(xlabel = 'n Clusters', ylabel = 'Distorcao', title = 'Elbow Method')
-    fig.savefig('alunos_distorcao_.png')
-    plt.show()
-
+        centroids = kmeans_models[k].cluster_centers_
+        centroids.astype(float)
+        dist = cdist(norm_data,centroids,'euclidean')
+        distorcoes.append(sum(np.min(dist, axis =1)/shape))
     #Calcular o número ideal de clusters
     x0 = K[0]
     y0 = distorcoes[0]

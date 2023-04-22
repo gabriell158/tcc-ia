@@ -5,6 +5,7 @@ from pickle import dump
 def normalize(num_cols, num_normalize, cat_normalize):
 
     num_normalize = pd.DataFrame(num_normalize, columns=num_cols.columns)
+    num_normalize.to_pickle('num_normalize.pkl')
     normalize_data = cat_normalize.join(num_normalize, how = 'left')
     normalize_data['Age'] =  normalize_data['Age'].fillna(0)
     normalize_data['Grad_Period'] =  normalize_data['Grad_Period'].fillna(0)
@@ -29,18 +30,18 @@ def normalize(num_cols, num_normalize, cat_normalize):
     normalize_data['A19'] =  normalize_data['A19'].fillna(0)
     normalize_data['A20'] =  normalize_data['A20'].fillna(0)
     normalize_data['D21'] =  normalize_data['D21'].fillna(0)
-
     return normalize_data
 
 
 def numNormalize(num_cols):
     scaler = MinMaxScaler()
+    numerico = scaler.fit(num_cols)
     num_normalize = scaler.fit_transform(num_cols)
-    dump(num_normalize,open('num_normalizer.model', 'wb'))
+    dump(numerico,open('num_normalizer.model', 'wb'))
     return num_normalize
 
 def catNormalize(cat_cols):
-    cat_normalize = pd.get_dummies(cat_cols)
+    cat_normalize = pd.get_dummies(cat_cols, prefix_sep = '&')
     f = open('cat_normal_definition.model', 'w')
     f.write(','.join(str(s) for s in cat_normalize.columns.values.tolist()))
     f.close()

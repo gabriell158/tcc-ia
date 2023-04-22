@@ -1,6 +1,8 @@
 from flask import Flask, request
 from src.AI.train import train
 from src.AI.duplicated import duplicated
+from src.AI.dass_sum import classify_anxscore, classify_depscore, classify_strscore
+import traceback
 import pandas as pd
 
 
@@ -8,15 +10,15 @@ app = Flask(__name__)
 @app.route("/model",methods=["POST","GET"])
 def model1():
   if request.method == "POST":
-    df = pd.read_csv('teste.csv')
-
-    new_df = duplicated(df)
-    teste = train(new_df)
+      df = pd.read_csv('teste.csv')
+      new_df = duplicated(df)
+      train(new_df)
+      return 'deu'
     #teste = train(request.data)
-    return teste
   if request.method == "GET":
-    # listar os modelos treinados
-    return
+    clusters = pd.read_pickle('clusters_description.pkl')
+    print(clusters)
+    return 'salve'
 
 @app.route("/model/<int:model_id>",methods=["POST","DELETE"])
 def model2():

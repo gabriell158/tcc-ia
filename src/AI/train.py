@@ -2,8 +2,9 @@ from src.AI.normalize import normalize, catNormalize, numNormalize
 from src.AI.elbow import elbow_method
 from src.AI.raw_data import rawData, catCols, numCols
 from src.AI.denormalize import denormalize
+import pandas as pd
 
-def train(df, class_dep, class_anx, class_str):
+def train(df):
     gender = df['Gender']
     age = df['Age']
     marital = df['Marital_Status']
@@ -32,16 +33,19 @@ def train(df, class_dep, class_anx, class_str):
     a19 =  df['A19']
     a20 =  df['A20']
     d21 =  df['D21']
-
-    cat_cols = catCols(gender, marital, university, ocupation)
+    # class_dep = df['Classify_Dep']
+    # class_anx = df['Classify_Dep']
+    # class_str = df['Classify_Dep']
+    
+    cat_cols = catCols(gender, marital, university, ocupation, children)
     num_cols = numCols(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
     cat_normalized = catNormalize(cat_cols)
     num_normalized = numNormalize(num_cols)
     
-    normalized = normalize(cat_cols, num_cols)
-    raw_data = rawData(gender, marital, university, ocupation, children, class_dep, class_anx, class_str, age, grad_period, num_cols, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
-    model = elbow_method(normalized, raw_data)
-    cluster_description = denormalize(model, normalized, cat_normalized, cat_cols, num_normalized)
+    normalized = normalize(num_cols, num_normalized, cat_normalized)
+    raw_data = rawData(cat_cols, num_cols)
+    model = elbow_method(normalized, cat_cols)
+    cluster_description = denormalize(model, normalized, cat_normalized, cat_cols)
 
     return cluster_description
 
