@@ -1,7 +1,6 @@
 from sklearn.cluster import KMeans
 from scipy.spatial.distance import cdist
 import numpy as np
-import matplotlib.pyplot as plt
 import math
 
 def elbow_method(norm_data, raw_data):
