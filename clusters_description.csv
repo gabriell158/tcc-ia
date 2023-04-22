@@ -1,8 +1,0 @@
-,Gender,Marital_Status,University,Ocupation,Children,Age,Grad_Period,S1,A2,D3,A4,D5,S6,A7,S8,A9,D10,S11,S12,D13,S14,A15,D16,D17,S18,A19,A20,D21,Depression_Score,Anxiety_Score,Stress_Score,Classify_Dep,Classify_Anx,Classify_Str
-0,Feminino,Solteira(o),,Estudante,0,20,3,2,2,2,2,3,3,2,3,3,3,2,3,3,2,2,2,3,3,2,2,3,19,15,18,Extremely Severe,Extremely Severe,Extremely Severe
-1,Feminino,Solteira(o),UP,Estudante,0,24,5,1,2,1,2,2,2,1,2,2,1,2,2,2,2,1,1,1,2,2,2,1,9,12,13,Moderate,Extremely Severe,Severe
-2,Feminino,Solteira(o),,Estudante,0,23,4,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,1,0,3,Normal,Normal,Normal
-3,Feminino,Solteira(o),UNISUL,Estudante,0,22,2,2,1,1,2,2,2,2,3,2,1,2,3,1,1,2,1,1,3,2,2,1,8,13,16,Moderate,Extremely Severe,Severe
-4,Feminino,Solteira(o),,Estudante e Trabalho,0,22,4,1,1,1,1,2,2,1,1,1,1,1,2,1,1,1,1,1,1,1,1,0,7,7,9,Moderate,Moderate,Mild
-5,Masculino,Solteira(o),UP,Estudante,0,23,6,1,1,1,1,2,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,6,6,7,Mild,Moderate,Normal
-6,Feminino,Solteira(o),UP,Estudante,0,21,5,1,1,1,1,1,1,1,2,1,1,2,2,1,1,1,1,1,2,1,1,0,6,7,11,Mild,Moderate,Moderate
