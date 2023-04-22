@@ -13,7 +13,7 @@ def model1():
       df = pd.read_csv('teste.csv')
       new_df = duplicated(df)
       train(new_df)
-      return 'deu'
+      return 'Modelo treinado'
     #teste = train(request.data)
   if request.method == "GET":
     clusters = pd.read_pickle('clusters_description.pkl')

@@ -45,6 +45,6 @@ def denormalize(dados_kmeans_model, dados_norm, colunas_cat_norm, colunas_cat):
     clusters_description['Classify_Dep'] = clusters_description['Depression_Score'].apply(classify_depscore)
     clusters_description['Classify_Anx'] = clusters_description['Anxiety_Score'].apply(classify_anxscore)
     clusters_description['Classify_Str'] = clusters_description['Stress_Score'].apply(classify_strscore)
-    clusters_description.to_pickle('clusters_description.pkl')
+    #clusters_description.to_pickle('clusters_description.pkl')
 
-    return 'foi'
+    return clusters_description
