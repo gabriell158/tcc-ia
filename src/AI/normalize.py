@@ -2,10 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from pickle import dump
 
-def normalize(num_cols, num_normalize, cat_normalize):
+def normalize_data(num_cols, num_normalize, cat_normalize):
 
     num_normalize = pd.DataFrame(num_normalize, columns=num_cols.columns)
-    num_normalize.to_pickle('num_normalize.pkl')
     normalize_data = cat_normalize.join(num_normalize, how = 'left')
     normalize_data['Age'] =  normalize_data['Age'].fillna(0)
     normalize_data['Grad_Period'] =  normalize_data['Grad_Period'].fillna(0)
@@ -30,18 +29,15 @@ def normalize(num_cols, num_normalize, cat_normalize):
     normalize_data['A19'] =  normalize_data['A19'].fillna(0)
     normalize_data['A20'] =  normalize_data['A20'].fillna(0)
     normalize_data['D21'] =  normalize_data['D21'].fillna(0)
-    return normalize_data
+    return normalize_data, num_normalize
 
 
-def numNormalize(num_cols):
+def normalize_numeric_data(numeric_columns):
     scaler = MinMaxScaler()
-    numerico = scaler.fit(num_cols)
-    num_normalize = scaler.fit_transform(num_cols)
-    return num_normalize, numerico
+    numeric_fit = scaler.fit(numeric_columns)
+    normalized_numeric = scaler.fit_transform(numeric_columns)
+    return normalized_numeric, numeric_fit
 
-def catNormalize(cat_cols):
-    cat_normalize = pd.get_dummies(cat_cols, prefix_sep = '&')
-    # f = open('cat_normal_definition.model', 'w')
-    # f.write(','.join(str(s) for s in cat_normalize.columns.values.tolist()))
-    # f.close()
-    return cat_normalize
+def normalize_categorical_data(categorical_columns):
+    normalized_categorical = pd.get_dummies(categorical_columns, prefix_sep = '&')
+    return normalized_categorical

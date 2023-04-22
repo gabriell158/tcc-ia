@@ -2,34 +2,35 @@ from sklearn.cluster import KMeans
 from scipy.spatial.distance import cdist
 import numpy as np
 import math
+MIN_CLUSTER_NUMBER = 1
+MAX_CLUSTER_NUMBER = 39
 
-def elbow_method(norm_data, raw_data):
-    distorcoes = []
-    K = range(1,39)
+def elbow_method(data_normalized, raw_data):
+    distortions = []
+    K = range(MIN_CLUSTER_NUMBER,MAX_CLUSTER_NUMBER)
     kmeans_models = {}
     shape = raw_data.shape[0]
-    norm_data = norm_data.astype(float)
+    data_normalized = data_normalized.astype(float)
     for k in K:
-        kmeans_models[k] = KMeans(n_clusters=k, random_state=42).fit(norm_data)
-        centroids = kmeans_models[k].cluster_centers_
-        centroids.astype(float)
-        dist = cdist(norm_data,centroids,'euclidean')
-        distorcoes.append(sum(np.min(dist, axis =1)/shape))
-    #Calcular o número ideal de clusters
+        kmeans_models[k] = KMeans(n_clusters=k, random_state=42).fit(data_normalized)
+        clusters_centers = kmeans_models[k].cluster_centers_
+        clusters_centers.astype(float)
+        dist = cdist(data_normalized,clusters_centers,'euclidean')
+        distortions.append(sum(np.min(dist, axis =1)/shape))
+
     x0 = K[0]
-    y0 = distorcoes[0]
+    y0 = distortions[0]
 
     x1 = K[len(K)-1]
-    y1 = distorcoes[len(distorcoes)-1]
+    y1 = distortions[len(distortions)-1]
 
-    distancias = []
-    for i in range(len(distorcoes)):
+    distances = []
+    for i in range(len(distortions)):
         x = K[i]
-        y = distorcoes[i]
-        numerador = abs((y1-y0)*x - (x1-x0)*y + x1*y0 - y1*x0)
-        denominador = math.sqrt((y1-y0)**2 + (x1-x0)**2)
-        distancias.append(numerador/denominador)
+        y = distortions[i]
+        numerator = abs((y1-y0)*x - (x1-x0)*y + x1*y0 - y1*x0)
+        denominator = math.sqrt((y1-y0)**2 + (x1-x0)**2)
+        distances.append(numerator/denominator)
 
-    #maior distância
-    n_clusters_otimo =K[distancias.index(np.max(distancias))]
-    return kmeans_models[n_clusters_otimo]
+    optimal_cluster_number =K[distances.index(np.max(distances))]
+    return kmeans_models[optimal_cluster_number]

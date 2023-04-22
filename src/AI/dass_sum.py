@@ -5,7 +5,7 @@
 #         Severe      11-13	    8-9	   13-16
 #Extremely Severe	    14+	      10+	   17+
 
-def classify_depscore(score):
+def classify_depression_score(score):
   if score >= 0 and score <= 4:
     return 'Normal'
   elif score >= 5 and score <= 6:
@@ -17,7 +17,7 @@ def classify_depscore(score):
   else:
     return 'Extremely Severe'
 
-def classify_anxscore(score):
+def classify_anxiety_score(score):
   if score >= 0 and score <= 3:
     return 'Normal'
   elif score >= 4 and score <= 5:
@@ -29,7 +29,7 @@ def classify_anxscore(score):
   else:
     return 'Extremely Severe'
 
-def classify_strscore(score):
+def classify_stress_score(score):
   if score >= 0 and score <= 7:
     return 'Normal'
   elif score >= 8 and score <= 9:

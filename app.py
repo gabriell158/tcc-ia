@@ -1,12 +1,12 @@
 from flask import Flask, request
 from src.AI.train import train
-from src.AI.duplicated import duplicated
+from src.AI.duplicated import formatting_data
 import pandas as pd
 import firebase_admin
 import traceback
 from firebase_admin import firestore, credentials
 from datetime import datetime
-
+from src.AI.new_student import cluster_inference
 
 app = Flask(__name__)
 @app.route("/model",methods=["POST","GET"])
@@ -15,8 +15,8 @@ def model1():
       try:
 
         df = pd.read_csv('teste.csv')
-        new_df = duplicated(df)
-        clusters = train(new_df)
+        formated_data = formatting_data(df)
+        clusters = train(formated_data)
         cred = credentials.Certificate('tcc-mental-health-credentials.json')
 
         firebase_admin.initialize_app(cred)
@@ -32,6 +32,8 @@ def model1():
           }
        
         db.collection(u'Models').add(response)
+        #c = cluster_inference('Feminino','Solteira(o)','UNIVALI','Estudante','0','22','4', '2', '2', '1', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '1', '1', '2', '2', '2', '2', '1')
+
         return response
       except Exception:
         traceback.print_exc()

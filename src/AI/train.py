@@ -1,50 +1,48 @@
-from src.AI.normalize import normalize, catNormalize, numNormalize
+from src.AI.normalize import normalize_data, normalize_categorical_data, normalize_numeric_data
 from src.AI.elbow import elbow_method
-from src.AI.raw_data import catCols, numCols
-from src.AI.denormalize import denormalize
+from src.AI.raw_data import get_categorical_data, get_numeric_data
+from src.AI.denormalize import denormalize_data
 
-def train(df):
-    gender = df['Gender']
-    age = df['Age']
-    marital = df['Marital_Status']
-    university = df['University']
-    ocupation = df['Ocupation']
-    children = df['Children']
-    grad_period = df['Grad_Period']
-    s1 =  df['S1']
-    a2 =  df['A2']
-    d3 =  df['D3']
-    a4 =  df['A4']
-    d5 =  df['D5']
-    s6 =  df['S6']
-    a7 =  df['A7']
-    s8 =  df['S8']
-    a9 =  df['A9']
-    d10 =  df['D10']
-    s11 =  df['S11']
-    s12 =  df['S12']
-    d13 =  df['D13']
-    s14 =  df['S14']
-    a15 =  df['A15']
-    d16 =  df['D16']
-    d17 =  df['D17']
-    s18 =  df['S18']
-    a19 =  df['A19']
-    a20 =  df['A20']
-    d21 =  df['D21']
+def train(data):
+    gender = data['Gender']
+    age = data['Age']
+    marital = data['Marital_Status']
+    university = data['University']
+    ocupation = data['Ocupation']
+    children = data['Children']
+    grad_period = data['Grad_Period']
+    s1 =  data['S1']
+    a2 =  data['A2']
+    d3 =  data['D3']
+    a4 =  data['A4']
+    d5 =  data['D5']
+    s6 =  data['S6']
+    a7 =  data['A7']
+    s8 =  data['S8']
+    a9 =  data['A9']
+    d10 =  data['D10']
+    s11 =  data['S11']
+    s12 =  data['S12']
+    d13 =  data['D13']
+    s14 =  data['S14']
+    a15 =  data['A15']
+    d16 =  data['D16']
+    d17 =  data['D17']
+    s18 =  data['S18']
+    a19 =  data['A19']
+    a20 =  data['A20']
+    d21 =  data['D21']
     
-    cat_cols = catCols(gender, marital, university, ocupation, children)
-    num_cols = numCols(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
-    cat_normalized = catNormalize(cat_cols)
-    num_normalized, numerico = numNormalize(num_cols)
-    print(numerico)
-    
-    normalized = normalize(num_cols, num_normalized, cat_normalized)
-    model = elbow_method(normalized, cat_cols)
-    cluster_description = denormalize(model, normalized, cat_normalized, cat_cols, numerico)
+    categorical_columns = get_categorical_data(gender, marital, university, ocupation, children)
+    numeric_columns = get_numeric_data(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
+    categorical_normalized = normalize_categorical_data(categorical_columns)
+    numeric_normalized, numeric = normalize_numeric_data(numeric_columns)
+    normalized_data, numeric_model = normalize_data(numeric_columns, numeric_normalized, categorical_normalized)
+    kmeans_model = elbow_method(normalized_data, categorical_columns)
+    denormalized_clusters = denormalize_data(kmeans_model, normalized_data, categorical_normalized, categorical_columns, numeric, numeric_model)
     response = []
     i = 0
-    for cluster in cluster_description.values.tolist():        
+    for cluster in denormalized_clusters.values.tolist():        
         response.append({
             'number': i,
             'depression': cluster[-3],
