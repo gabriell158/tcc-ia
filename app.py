@@ -10,13 +10,13 @@ from src.AI.new_student import cluster_inference
 
 app = Flask(__name__)
 @app.route("/model",methods=["POST","GET"])
-def model1():
+def model3():
   if request.method == "POST":
       try:
 
         df = pd.read_csv('teste.csv')
         formated_data = formatting_data(df)
-        clusters = train(formated_data)
+        clusters, kmeans_model, denormalized = train(formated_data)
         cred = credentials.Certificate('tcc-mental-health-credentials.json')
 
         firebase_admin.initialize_app(cred)
@@ -32,7 +32,6 @@ def model1():
           }
        
         db.collection(u'Models').add(response)
-        #c = cluster_inference('Feminino','Solteira(o)','UNIVALI','Estudante','0','22','4', '2', '2', '1', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '1', '1', '2', '2', '2', '2', '1')
 
         return response
       except Exception:
@@ -57,7 +56,12 @@ def tracking():
   if request.method == "POST":
     # faz a inferencia e salva no banco o resultado
     # retorna o resultado da inferencia
-    return
+    df = pd.read_csv('teste.csv')
+    formated_data = formatting_data(df)
+    clusters, kmeans_model, denormalized_clusters = train(formated_data)
+    student_tracking = cluster_inference(kmeans_model, 'Feminino','Solteira(o)','UP','Estudante e Trabalho','1','18','7', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '0', '3', '3', '3', '3', '3', '3', '3', '3')
+
+    return str(kmeans_model)
 
 @app.route("/form",methods=["GET"])
 def form():

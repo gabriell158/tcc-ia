@@ -50,5 +50,5 @@ def train(data):
             'stress': cluster[-1]
         })
         i+=1
-    return response
+    return response, kmeans_model, denormalized_clusters
 
