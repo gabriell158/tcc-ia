@@ -3,7 +3,7 @@ from scipy.spatial.distance import cdist
 import numpy as np
 import math
 MIN_CLUSTER_NUMBER = 1
-MAX_CLUSTER_NUMBER = 39
+MAX_CLUSTER_NUMBER = 120
 
 def elbow_method(data_normalized, raw_data):
     distortions = []

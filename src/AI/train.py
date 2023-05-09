@@ -45,6 +45,11 @@ def train(data):
     for cluster in denormalized_clusters.values.tolist():        
         response.append({
             'number': i,
+            'gender': cluster[-34],
+            'marital': cluster[-33],
+            'ocupation': cluster[-31],
+            'children': cluster[-30],
+            'age': cluster[-29],
             'depression': cluster[-3],
             'anxiety': cluster[-2],
             'stress': cluster[-1]

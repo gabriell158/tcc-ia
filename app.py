@@ -8,19 +8,23 @@ from firebase_admin import firestore, credentials
 from datetime import datetime
 from src.AI.new_student import cluster_inference
 
+cred = credentials.Certificate('tcc-mental-health-credentials.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+models_ref = db.collection(u'Models')
+trackings_ref = db.collection(u'Trackings')
+
 app = Flask(__name__)
+
 @app.route("/model",methods=["POST","GET"])
+
 def model3():
   if request.method == "POST":
       try:
-
         df = pd.read_csv('teste.csv')
         formated_data = formatting_data(df)
         clusters, kmeans_model, denormalized = train(formated_data)
-        cred = credentials.Certificate('tcc-mental-health-credentials.json')
-
-        firebase_admin.initialize_app(cred)
-        db = firestore.client()
+        
         pkl_file = pd.read_pickle('clusters_description.pkl')
         pkl_file.to_csv('clusters_description.csv')
         
@@ -31,25 +35,42 @@ def model3():
           u'clusters': clusters
           }
        
-        db.collection(u'Models').add(response)
+        models_ref.add(response)
 
         return response
+      
       except Exception:
         traceback.print_exc()
-        return 'fodeus'
-    #teste = train(request.data)
+        return 'Something went wrong'
+
   if request.method == "GET":
     #listar modelo treinado
-    return 'salve'
+    docs = models_ref.get()
+    for doc in docs:
+        data = doc.to_dict()
 
-@app.route("/model/<int:model_id>",methods=["POST","DELETE"])
-def model2():
+    return data
+
+@app.route("/model/<string:model_id>",methods=["POST","DELETE"])
+def model2(model_id):
+  document_ref = models_ref.document(model_id)
+  document = document_ref.get()
   if request.method == "POST":
-    # seleciona o modelo para ser usado para inferencia
-    return
+    # Iterar sobre os documentos e imprimir todos os dados
+    if document.exists:
+      data = document.to_dict()
+      return data
+    else:
+      return f"Modelo com ID {model_id} não encontrado."
+  
   if request.method == "DELETE":
-    # exclui o modelo
-    return
+    if document.exists:
+      # Excluir o documento
+      document_ref.delete()
+      return f"Modelo com ID {model_id} excluído com sucesso."
+    
+    else:
+      return f"Modelo com ID {model_id} não encontrado."
 
 @app.route("/tracking",methods=["POST"])
 def tracking():
@@ -59,9 +80,42 @@ def tracking():
     df = pd.read_csv('teste.csv')
     formated_data = formatting_data(df)
     clusters, kmeans_model, denormalized_clusters = train(formated_data)
-    student_tracking = cluster_inference(kmeans_model, 'Feminino','Solteira(o)','UP','Estudante e Trabalho','1','18','7', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '0', '3', '3', '3', '3', '3', '3', '3', '3')
+    student_tracking = cluster_inference(kmeans_model, 'Masculino','Solteira(o)','UP','Estudante','0','27','5', '2', '1', '0', '0', '1', '1', '0', '1', '1', '1', '1', '2', '1', '1', '0', '1', '0', '1', '1', '0', '0')
 
-    return str(kmeans_model)
+
+    query = models_ref.get()   
+    data = []
+    for doc in query:
+        doc_data = doc.to_dict()
+        clusters_data = doc_data['clusters']
+        for cluster in clusters_data:
+            data.append(cluster)
+
+    tracking_data = data[int(student_tracking[1])]
+    tracking = [tracking_data["anxiety"], tracking_data["depression"], tracking_data["stress"]]
+    
+    tracking_obj = {
+      "anxiety": {
+        "level": tracking[0],
+        "reliability": 0
+      },
+      "depression": {
+        "level": tracking[1],
+        "reliability": 1
+      },
+      "stress": {
+        "level": tracking[2],
+        "reliability": 2
+      },
+    }
+    response = {
+          u'anxiety': tracking_obj["anxiety"],
+          u'depression': tracking_obj["depression"],
+          u'stress': tracking_obj["stress"]
+          }
+    trackings_ref.add(response)
+
+    return response
 
 @app.route("/form",methods=["GET"])
 def form():
