@@ -4,12 +4,12 @@ from src.AI.duplicated import formatting_data
 import pandas as pd
 import firebase_admin
 import traceback
-from firebase_admin import firestore, credentials
+from firebase_admin import firestore, credentials, storage
 from datetime import datetime
 from src.AI.new_student import cluster_inference
 
 cred = credentials.Certificate('tcc-mental-health-credentials.json')
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {'storageBucket': 'tcc-mental-health.appspot.com'})
 db = firestore.client()
 models_ref = db.collection(u'Models')
 trackings_ref = db.collection(u'Trackings')
@@ -21,13 +21,22 @@ app = Flask(__name__)
 def model3():
   if request.method == "POST":
       try:
+        #puxar os normalizadores quando escolher a modelo pra utilizar
         df = pd.read_csv('teste.csv')
         formated_data = formatting_data(df)
         clusters, kmeans_model, denormalized = train(formated_data)
-        
+        print(kmeans_model)
         pkl_file = pd.read_pickle('clusters_description.pkl')
         pkl_file.to_csv('clusters_description.csv')
         
+        storage_models = ['cat_normal_definition.model', 'num_normalizer.model', 'data_kmeans_model.pkl']
+        bucket = storage.bucket()
+        date = datetime.now()
+        date_format = date.strftime("%d-%m-%Y-%H:%M")
+        for model in storage_models:
+          blob = bucket.blob('models/' + date_format + '/' + model)
+          blob.upload_from_filename(model)
+
         firebase_admin.firestore.client(app=None)
         response = {
           u'date': datetime.now(),
@@ -80,9 +89,8 @@ def tracking():
     df = pd.read_csv('teste.csv')
     formated_data = formatting_data(df)
     clusters, kmeans_model, denormalized_clusters = train(formated_data)
-    student_tracking = cluster_inference(kmeans_model, 'Masculino','Solteira(o)','UP','Estudante','0','27','5', '2', '1', '0', '0', '1', '1', '0', '1', '1', '1', '1', '2', '1', '1', '0', '1', '0', '1', '1', '0', '0')
-
-
+    print(kmeans_model)
+    student_tracking = cluster_inference(kmeans_model, 'Masculino','Solteira(o)','UFPR','Estudante e Trabalho','0','26','4', '1', '0', '1', '1', '2', '2', '0', '1', '1', '0', '2', '2', '2', '0', '0', '0', '0', '1', '2', '2', '0')
     query = models_ref.get()   
     data = []
     for doc in query:
@@ -114,7 +122,6 @@ def tracking():
           u'stress': tracking_obj["stress"]
           }
     trackings_ref.add(response)
-
     return response
 
 @app.route("/form",methods=["GET"])

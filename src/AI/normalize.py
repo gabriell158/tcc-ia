@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from pickle import dump
+from datetime import datetime
+
 
 def normalize_data(num_cols, num_normalize, cat_normalize):
 
@@ -36,8 +38,12 @@ def normalize_numeric_data(numeric_columns):
     scaler = MinMaxScaler()
     numeric_fit = scaler.fit(numeric_columns)
     normalized_numeric = scaler.fit_transform(numeric_columns)
+    dump(numeric_fit,open('num_normalizer.model', 'wb'))
     return normalized_numeric, numeric_fit
 
 def normalize_categorical_data(categorical_columns):
     normalized_categorical = pd.get_dummies(categorical_columns, prefix_sep = '&')
+    f = open('cat_normal_definition.model', 'w')
+    f.write(','.join(str(s) for s in normalized_categorical.columns.values.tolist()))
+    f.close()
     return normalized_categorical

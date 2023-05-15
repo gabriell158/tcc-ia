@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn import preprocessing
-
+NUM_COLUMNS = ['Age', 'Grad_Period', 'S1', 'A2', 'D3', 'A4', 'D5', 'S6', 'A7', 'S8', 'A9', 'D10', 'S11', 'S12', 'D13', 'S14', 'A15', 'D16', 'D17', 'S18', 'A19', 'A20', 'D21']
+CAT_COLUMNS = ['Gender', 'Marital_Status','University','Ocupation','Children']
+NEW_DF = CAT_COLUMNS + NUM_COLUMNS
 def cluster_inference(kmeans_model,
     gender = '',
     marital_status = '',
@@ -61,24 +63,23 @@ def cluster_inference(kmeans_model,
       'A20': [a20],
       'D21': [d21]
   }
-  num_columns = ['Age', 'Grad_Period', 'S1', 'A2', 'D3', 'A4', 'D5', 'S6', 'A7', 'S8', 'A9', 'D10', 'S11', 'S12', 'D13', 'S14', 'A15', 'D16', 'D17', 'S18', 'A19', 'A20', 'D21']
-  columns_to_keep=['Gender', 'Marital_Status','University','Ocupation','Children']
 
-  dados_df = pd.DataFrame(novo_aluno, columns = columns_to_keep + num_columns)
+  #Dados precisam vir do arquivo train.py
+  dados_df = pd.DataFrame(novo_aluno, columns = NEW_DF)
   categorical_normalizer = "Gender&Feminino,Gender&Masculino,Gender&Outro,Marital_Status&Casada(o),Marital_Status&Solteira(o),University&FEMPAR,University&FPP,University&FPS,University&Federal do Paraná ,University&PUCPR,University&UFPR,University&UFPR ,University&UNICESUMAR,University&UNISUL,University&UNIVALI,University&UNOESTE,University&UP,University&Unicesumar ,University&ufpr,Ocupation&Estudante,Ocupation&Estudante e Trabalho,Children&0,Children&1"
-  joined_data = pd.DataFrame(columns=categorical_normalizer.split(',') + num_columns)
-  categorical_student_data = dados_df.drop(columns=num_columns)
-  numeric_student_data = dados_df[num_columns]
+  joined_data = pd.DataFrame(columns=categorical_normalizer.split(',') + NUM_COLUMNS)
+  
+  categorical_student_data = dados_df.drop(columns=NUM_COLUMNS)
+  numeric_student_data = dados_df[NUM_COLUMNS]
 
   categorical_student_data = pd.get_dummies(categorical_student_data,prefix_sep='&')
   joined_student_data = pd.concat([joined_data,categorical_student_data],sort=False, ignore_index=True)
 
   normalizador = preprocessing.MinMaxScaler().fit(numeric_student_data)
   numeric_student_data = normalizador.transform(numeric_student_data)
-  
-
+    
   #Recompor o data frame, a partir dos dados normalizados
-  numeric_student_data = pd.DataFrame(numeric_student_data, columns=num_columns)
+  numeric_student_data = pd.DataFrame(numeric_student_data, columns=NUM_COLUMNS)
   joined_student_data = categorical_student_data.join(numeric_student_data, how='left')
   joined_data = pd.concat([joined_data,joined_student_data],sort=False, ignore_index=True )
   joined_data = joined_data.fillna(0)
