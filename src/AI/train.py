@@ -3,6 +3,8 @@ from src.AI.elbow import elbow_method
 from src.AI.raw_data import get_categorical_data, get_numeric_data
 from src.AI.denormalize import denormalize_data
 from src.AI.centroids import get_centroids
+from pickle import dump
+import pandas as pd
 
 def train(data):
     gender = data['Gender']
@@ -46,6 +48,9 @@ def train(data):
     kmeans_model = elbow_method(normalized_data, categorical_columns)
     denormalized_clusters = denormalize_data(kmeans_model, normalized_data, categorical_normalized, categorical_columns, numeric, numeric_model)
     cluster_centers = get_centroids(kmeans_model)
+    dump(denormalized_clusters,open('cluster_description.pkl','wb'))
+    pkl_file = pd.read_pickle('cluster_description.pkl')
+    pkl_file.to_csv('clusters_description.csv')
     response = []
     i = 0
     for cluster in denormalized_clusters.values.tolist():        
@@ -56,10 +61,11 @@ def train(data):
             'ocupation': cluster[-31],
             'children': cluster[-30],
             'age': cluster[-29],
+            'grad_period': cluster[-28],
             'depression': cluster[-3],
             'anxiety': cluster[-2],
             'stress': cluster[-1]
         })
         i+=1
-    return response, kmeans_model, denormalized_clusters
+    return response
 

@@ -1,9 +1,10 @@
 import pandas as pd
-from sklearn import preprocessing
+from pickle import load
 NUM_COLUMNS = ['Age', 'Grad_Period', 'S1', 'A2', 'D3', 'A4', 'D5', 'S6', 'A7', 'S8', 'A9', 'D10', 'S11', 'S12', 'D13', 'S14', 'A15', 'D16', 'D17', 'S18', 'A19', 'A20', 'D21']
 CAT_COLUMNS = ['Gender', 'Marital_Status','University','Ocupation','Children']
 NEW_DF = CAT_COLUMNS + NUM_COLUMNS
-def cluster_inference(kmeans_model,
+
+def cluster_inference(
     gender = '',
     marital_status = '',
     university = '',
@@ -66,25 +67,25 @@ def cluster_inference(kmeans_model,
 
   #Dados precisam vir do arquivo train.py
   dados_df = pd.DataFrame(novo_aluno, columns = NEW_DF)
-  categorical_normalizer = "Gender&Feminino,Gender&Masculino,Gender&Outro,Marital_Status&Casada(o),Marital_Status&Solteira(o),University&FEMPAR,University&FPP,University&FPS,University&Federal do Paraná ,University&PUCPR,University&UFPR,University&UFPR ,University&UNICESUMAR,University&UNISUL,University&UNIVALI,University&UNOESTE,University&UP,University&Unicesumar ,University&ufpr,Ocupation&Estudante,Ocupation&Estudante e Trabalho,Children&0,Children&1"
-  joined_data = pd.DataFrame(columns=categorical_normalizer.split(',') + NUM_COLUMNS)
-  
+  attr_normalizer = open('cat_normal_definition.model', 'r')
+  joined_data = pd.DataFrame(columns=attr_normalizer.read().split(',') + NUM_COLUMNS)
+
   categorical_student_data = dados_df.drop(columns=NUM_COLUMNS)
   numeric_student_data = dados_df[NUM_COLUMNS]
 
   categorical_student_data = pd.get_dummies(categorical_student_data,prefix_sep='&')
   joined_student_data = pd.concat([joined_data,categorical_student_data],sort=False, ignore_index=True)
 
-  normalizador = preprocessing.MinMaxScaler().fit(numeric_student_data)
-  numeric_student_data = normalizador.transform(numeric_student_data)
-    
+  normalizer = load(open('num_normalizer.model', 'rb'))
+  numeric_student_data = normalizer.transform(numeric_student_data)
+
   #Recompor o data frame, a partir dos dados normalizados
   numeric_student_data = pd.DataFrame(numeric_student_data, columns=NUM_COLUMNS)
   joined_student_data = categorical_student_data.join(numeric_student_data, how='left')
   joined_data = pd.concat([joined_data,joined_student_data],sort=False, ignore_index=True )
   joined_data = joined_data.fillna(0)
-
   
-  designated_cluster = kmeans_model.predict(joined_data.values.tolist())
+  cluster_model = load(open('data_kmeans_model.pkl', 'rb'))
+  designated_cluster = cluster_model.predict(joined_data.values.tolist())
 
   return str(designated_cluster)

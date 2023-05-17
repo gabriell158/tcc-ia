@@ -7,6 +7,9 @@ import traceback
 from firebase_admin import firestore, credentials, storage
 from datetime import datetime
 from src.AI.new_student import cluster_inference
+from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score
+
 
 cred = credentials.Certificate('tcc-mental-health-credentials.json')
 firebase_admin.initialize_app(cred, {'storageBucket': 'tcc-mental-health.appspot.com'})
@@ -28,14 +31,14 @@ def model3():
         df = pd.read_csv('questionario.csv')
 
         formated_data = formatting_data(df)
-        clusters, kmeans_model, denormalized = train(formated_data)
-        # pkl_file = pd.read_pickle('clusters_description.pkl')
-        # pkl_file.to_csv('clusters_description.csv')
+        clusters = train(formated_data)
+        pkl_file = pd.read_pickle('cluster_description.pkl')
+        pkl_file.to_csv('clusters_description.csv')
 
         storage_models = ['cat_normal_definition.model', 'num_normalizer.model', 'data_kmeans_model.pkl']
         date = datetime.now()
         date_format = date.strftime("%d-%m-%Y-%H:%M")
-        
+
         for model in storage_models:
           models = bucket.blob('models/' + date_format + '/' + model)
           models.upload_from_filename(model)
@@ -89,36 +92,42 @@ def tracking():
   if request.method == "POST":
     # faz a inferencia e salva no banco o resultado
     # retorna o resultado da inferencia
-    df = pd.read_csv('teste.csv')
-    formated_data = formatting_data(df)
-    clusters, kmeans_model, denormalized_clusters = train(formated_data)
-    print(kmeans_model)
-    student_tracking = cluster_inference(kmeans_model, 'Masculino','Solteira(o)','UFPR','Estudante e Trabalho','0','26','4', '1', '0', '1', '1', '2', '2', '0', '1', '1', '0', '2', '2', '2', '0', '0', '0', '0', '1', '2', '2', '0')
+  
+    kmeans_model = bucket.blob('models/15-05-2023-17:11/data_kmeans_model.pkl')
+    num_normalizer = bucket.blob('models/15-05-2023-17:11/num_normalizer.model')
+    cat_normal = bucket.blob('models/15-05-2023-17:11/cat_normal_definition.model')
+
+    kmeans_model.download_to_filename('data_kmeans_model.pkl')
+    num_normalizer.download_to_filename('num_normalizer.pkl')
+    cat_normal.download_to_filename('cat_normal_definition.pkl')
+                                                                                                   # 1    2    3    4    5    6    7    8    9   10    11   12  13   14   15   16   17   18   19   20   21
+    student_tracking = cluster_inference('Masculino','Solteira(o)','UFPR','Estudante','0','26','8', '2', '1', '1', '1', '2', '1', '0', '2', '0', '0', '2', '2', '2', '2', '0', '1', '2', '2', '1', '2', '1')
+  
     query = models_ref.get()   
     data = []
     for doc in query:
-        doc_data = doc.to_dict()
-        clusters_data = doc_data['clusters']
-        for cluster in clusters_data:
+       doc_data = doc.to_dict()
+       clusters_data = doc_data['clusters']
+       for cluster in clusters_data:
             data.append(cluster)
 
     tracking_data = data[int(student_tracking[1])]
     tracking = [tracking_data["anxiety"], tracking_data["depression"], tracking_data["stress"]]
     
     tracking_obj = {
-      "anxiety": {
+       "anxiety": {
         "level": tracking[0],
         "reliability": 0
       },
-      "depression": {
+       "depression": {
         "level": tracking[1],
         "reliability": 1
       },
-      "stress": {
+       "stress": {
         "level": tracking[2],
         "reliability": 2
       },
-    }
+     }
     response = {
           u'anxiety': tracking_obj["anxiety"],
           u'depression': tracking_obj["depression"],
