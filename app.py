@@ -13,6 +13,7 @@ firebase_admin.initialize_app(cred, {'storageBucket': 'tcc-mental-health.appspot
 db = firestore.client()
 models_ref = db.collection(u'Models')
 trackings_ref = db.collection(u'Trackings')
+bucket = storage.bucket()
 
 app = Flask(__name__)
 
@@ -22,20 +23,22 @@ def model3():
   if request.method == "POST":
       try:
         #puxar os normalizadores quando escolher a modelo pra utilizar
-        df = pd.read_csv('teste.csv')
+        form = bucket.blob('questionario.csv')
+        form.download_to_filename('questionario.csv')
+        df = pd.read_csv('questionario.csv')
+
         formated_data = formatting_data(df)
         clusters, kmeans_model, denormalized = train(formated_data)
-        print(kmeans_model)
-        pkl_file = pd.read_pickle('clusters_description.pkl')
-        pkl_file.to_csv('clusters_description.csv')
-        
+        # pkl_file = pd.read_pickle('clusters_description.pkl')
+        # pkl_file.to_csv('clusters_description.csv')
+
         storage_models = ['cat_normal_definition.model', 'num_normalizer.model', 'data_kmeans_model.pkl']
-        bucket = storage.bucket()
         date = datetime.now()
         date_format = date.strftime("%d-%m-%Y-%H:%M")
+        
         for model in storage_models:
-          blob = bucket.blob('models/' + date_format + '/' + model)
-          blob.upload_from_filename(model)
+          models = bucket.blob('models/' + date_format + '/' + model)
+          models.upload_from_filename(model)
 
         firebase_admin.firestore.client(app=None)
         response = {
