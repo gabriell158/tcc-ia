@@ -48,12 +48,19 @@ def train(data):
     kmeans_model = elbow_method(normalized_data, categorical_columns)
     denormalized_clusters = denormalize_data(kmeans_model, normalized_data, categorical_normalized, categorical_columns, numeric, numeric_model)
     cluster_centers = get_centroids(kmeans_model)
+
     dump(denormalized_clusters,open('cluster_description.pkl','wb'))
+    dump(normalized_data, open('normalized_data.pkl','wb'))
     pkl_file = pd.read_pickle('cluster_description.pkl')
     pkl_file.to_csv('clusters_description.csv')
+    pkl_file = pd.read_pickle('normalized_data.pkl')
+    pkl_file.to_csv('normalized_data.csv')
+
+    
     response = []
     i = 0
     for cluster in denormalized_clusters.values.tolist():        
+        #Perguntar p Escobar a necessidade de colocar X dados
         response.append({
             'number': i,
             'gender': cluster[-34],
