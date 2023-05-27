@@ -68,9 +68,7 @@ def model3():
           models = bucket.blob('models/' + model_ref.id + '/' + model)
           models.upload_from_filename(model)
 
-        return response
-        #TODO: buscar os dados do firestore -- Feito
-        #TODO: remover csv formatted data -- Feito        
+        return response      
       
       except Exception:
         traceback.print_exc()
@@ -115,13 +113,7 @@ def model2(model_id):
 @app.route("/tracking/<string:user_id>",methods=["POST"])
 def tracking(user_id):
   if request.method == "POST":
-    #TODO: Buscar os UserForms com esse user_id -- Feito
-    #TODO: Ordenar UserForms por data
-    #TODO: Pegar último respondido
-    #TODO: Usar o último UserForms para inferência
-    #TODO: Pegar os dados do usuário do Firestore em Users -- Feito
-    #TODO: Verificar necessidade de alteração da collection Users pois não da para adicionar vários Forms 
-    # (Tentei na mão e ele atualizou os dados e não substituiu)
+    #Não vamos acumular respostas
     user_data = users_ref.get()
     user_data = user_data[0].to_dict()
     inference_data = []
@@ -140,6 +132,7 @@ def tracking(user_id):
       'Ocupation': user_data['Ocupation'],
       'Children': user_data['Children']
     }
+    
     user_forms = user_data['UserForms']['Forms']
     for y in user_forms:
       user[forms[y['formId']]] = y['answer']
@@ -148,8 +141,8 @@ def tracking(user_id):
     student_tracking = cluster_inference(
       user['Gender'] ,user['Marital_Status'], user['University'], user['Ocupation'], user['Children'], user['Age'],
       user['Grad_Period'], user['S1'], user['A2'], user['D3'], user['A4'], user['D5'], user['S6'], user['A7'], user['S8'],
-      user['A9'], user['D10'], user['S11'], user['S12'], user['D13'], user['S14'], user['A15'], user['D16'], user['D17'], user['S18'],
-      user['A19'], user['A20'], user['D21']
+      user['A9'], user['D10'], user['S11'], user['S12'], user['D13'], user['S14'], user['A15'], user['D16'], user['D17'],
+      user['S18'], user['A19'], user['A20'], user['D21']
     )
 
     query = models_ref.get()   
@@ -165,17 +158,15 @@ def tracking(user_id):
     
     tracking_obj = {
        "anxiety": {
-        "level": tracking[0],
-        "reliability": 0
+        "level": tracking[0]
       },
        "depression": {
-        "level": tracking[1],
-        "reliability": 1
+        "level": tracking[1]
       },
        "stress": {
-        "level": tracking[2],
-        "reliability": 2
+        "level": tracking[2]
       },
+      "reliability": 1
      }
     response = {
           u'date': datetime.now(),

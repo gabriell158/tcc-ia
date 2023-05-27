@@ -60,7 +60,6 @@ def train(data):
     response = []
     i = 0
     for cluster in denormalized_clusters.values.tolist():        
-        #Perguntar p Escobar a necessidade de colocar X dados
         response.append({
             'number': i,
             'gender': cluster[-34],
