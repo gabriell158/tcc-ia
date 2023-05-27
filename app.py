@@ -20,21 +20,41 @@ trackings_ref = db.collection(u'Trackings')
 bucket = storage.bucket()
 storage_models = ['cat_normal_definition.model', 'num_normalizer.model', 'data_kmeans_model.pkl']
 app = Flask(__name__)
+user_forms_ref = db.collection(u'UserForms')
+users_ref = db.collection(u'Users')
+forms_ref = db.collection(u'Forms')
+forms_data = forms_ref.get()
+users_data = users_ref.get()
 
 @app.route("/model",methods=["POST","GET"])
 
 def model3():
   if request.method == "POST":
       try:
-        #TODO: buscar os dados do firestore
-        form = bucket.blob('questionario.csv')
-        form.download_to_filename('questionario.csv')
-        df = pd.read_csv('questionario.csv')
+        users = []
+        forms = {}
+        for x in forms_data:
+          forms[x.id] = x.get('disorder')
         
-        formated_data = formatting_data(df)
-        #TODO: remover csv formatted data
-        formated_data.to_csv('formated_data.csv')
-        clusters = train(formated_data)
+        for x in users_data: 
+          user = {
+            'id': x.id,
+            'Age': x.get('Age'),
+            'Gender': x.get('Gender'),
+            'Marital_Status': x.get('Marital_Status'),
+            'University': x.get('University'),
+            'Course': x.get('Course'),
+            'Grad_Period': x.get('Grad_Period'),
+            'Ocupation': x.get('Ocupation'),
+            'Children': x.get('Children'),
+            }
+          user_forms = x.get('UserForms').get('Forms')
+          for y in user_forms:
+            user[forms[y.get('formId')]] = y.get('answer')
+          users.append(user)
+        dataset_users = pd.DataFrame(users)
+        clusters = train(dataset_users)
+
 
         firebase_admin.firestore.client(app=None)
         response = {
@@ -49,6 +69,8 @@ def model3():
           models.upload_from_filename(model)
 
         return response
+        #TODO: buscar os dados do firestore -- Feito
+        #TODO: remover csv formatted data -- Feito        
       
       except Exception:
         traceback.print_exc()
@@ -57,10 +79,8 @@ def model3():
   if request.method == "GET":
     docs = models_ref.get()
     data = []
-
     for doc in docs:
         data.append(doc.to_dict())
-
     return data
 
 @app.route("/model/<string:model_id>",methods=["POST","DELETE"])
@@ -95,15 +115,43 @@ def model2(model_id):
 @app.route("/tracking/<string:user_id>",methods=["POST"])
 def tracking(user_id):
   if request.method == "POST":
-    #TODO: Buscar os UserForms com esse user_id
+    #TODO: Buscar os UserForms com esse user_id -- Feito
     #TODO: Ordenar UserForms por data
     #TODO: Pegar último respondido
     #TODO: Usar o último UserForms para inferência
-    #TODO: Pegar os dados do usuário do Firestore em Users
-    #reli = reliability()
-                                        # 1    2    3    4    5    6    7    8    9   10    11   12  13   14   15   16   17   18   19   20   21
-    student_tracking = cluster_inference('Masculino','Solteira(o)','UFPR','Estudante','0','26','8', '2', '1', '1', '1', '2', '1', '0', '2', '0', '0', '2', '2', '2', '2', '0', '1', '2', '2', '1', '2', '1')
-  
+    #TODO: Pegar os dados do usuário do Firestore em Users -- Feito
+    #TODO: Verificar necessidade de alteração da collection Users pois não da para adicionar vários Forms 
+    # (Tentei na mão e ele atualizou os dados e não substituiu)
+    user_data = users_ref.get()
+    user_data = user_data[0].to_dict()
+    inference_data = []
+    forms = {}
+
+    for x in forms_data:
+      forms[x.id] = x.get('disorder')
+
+    user = {
+      'Age': user_data['Age'],
+      'Gender': user_data['Gender'],
+      'Marital_Status': user_data['Marital_Status'],
+      'University': user_data['University'],
+      'Course': user_data['Course'],
+      'Grad_Period': user_data['Grad_Period'],
+      'Ocupation': user_data['Ocupation'],
+      'Children': user_data['Children']
+    }
+    user_forms = user_data['UserForms']['Forms']
+    for y in user_forms:
+      user[forms[y['formId']]] = y['answer']
+    inference_data.append(user)
+
+    student_tracking = cluster_inference(
+      user['Gender'] ,user['Marital_Status'], user['University'], user['Ocupation'], user['Children'], user['Age'],
+      user['Grad_Period'], user['S1'], user['A2'], user['D3'], user['A4'], user['D5'], user['S6'], user['A7'], user['S8'],
+      user['A9'], user['D10'], user['S11'], user['S12'], user['D13'], user['S14'], user['A15'], user['D16'], user['D17'], user['S18'],
+      user['A19'], user['A20'], user['D21']
+    )
+
     query = models_ref.get()   
     data = []
     for doc in query:
@@ -144,4 +192,4 @@ def tracking(user_id):
 # def form():
 #   if request.method == "GET":
 #     # lista os formulários preenchidos
-#     return
+#     return 
