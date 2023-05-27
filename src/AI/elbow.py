@@ -2,12 +2,10 @@ from sklearn.cluster import KMeans
 from scipy.spatial.distance import cdist
 import numpy as np
 import math
-MIN_CLUSTER_NUMBER = 1
-MAX_CLUSTER_NUMBER = 120
 
 def elbow_method(data_normalized, raw_data):
     distortions = []
-    K = range(MIN_CLUSTER_NUMBER,MAX_CLUSTER_NUMBER)
+    K = range(1, len(data_normalized) + 1)
     kmeans_models = {}
     shape = raw_data.shape[0]
     data_normalized = data_normalized.astype(float)

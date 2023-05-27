@@ -6,3 +6,5 @@ numpy
 matplotlib
 scipy
 firebase-admin
+python-dotenv
+pytest
