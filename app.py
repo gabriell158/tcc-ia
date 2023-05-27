@@ -67,7 +67,7 @@ def model3():
         for model in storage_models:
           models = bucket.blob('models/' + model_ref.id + '/' + model)
           models.upload_from_filename(model)
-
+        response['id'] = model_ref.id
         return response      
       
       except Exception:
@@ -97,7 +97,7 @@ def model2(model_id):
 
       return "Modelos Baixados"                                                            
     else:
-      return f"Modelo com ID {model_id} não encontrado."
+      return (f"Modelo com ID {model_id} não encontrado.", 404)
   
   if request.method == "DELETE":
     if document.exists:
@@ -108,7 +108,7 @@ def model2(model_id):
       return f"Modelo com ID {model_id} excluído com sucesso."
     
     else:
-      return f"Modelo com ID {model_id} não encontrado."
+      return (f"Modelo com ID {model_id} não encontrado.", 404)
 
 @app.route("/tracking/<string:user_id>",methods=["POST"])
 def tracking(user_id):
