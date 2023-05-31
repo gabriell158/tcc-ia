@@ -6,5 +6,9 @@ numpy
 matplotlib
 scipy
 firebase-admin
-python-dotenv
 pytest
+click
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
