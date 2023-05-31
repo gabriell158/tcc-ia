@@ -10,9 +10,24 @@ from src.AI.new_student import cluster_inference
 from src.AI.reliability import reliability
 from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score
+from dotenv import load_dotenv
+from os import environ
+load_dotenv()
 
+my_credentials = {
+  "type": environ.get('type'),
+  "project_id": environ.get('project_id'),
+  "private_key_id": environ.get('private_key_id'),
+  "private_key": environ.get('private_key').replace(r'\n', '\n'),
+  "client_email": environ.get('client_email'),
+  "client_id": environ.get('client_id'),
+  "auth_uri": environ.get('auth_uri'),
+  "token_uri": environ.get('token_uri'),
+  "auth_provider_x509_cert_url": environ.get('auth_provider_x509_cert_url'),
+  "client_x509_cert_url": environ.get('client_x509_cert_url'),
+}
 
-cred = credentials.Certificate('tcc-mental-health-credentials.json')
+cred = credentials.Certificate(my_credentials)
 firebase_admin.initialize_app(cred, {'storageBucket': 'tcc-mental-health.appspot.com'})
 db = firestore.client()
 models_ref = db.collection(u'Models')
@@ -27,7 +42,6 @@ forms_data = forms_ref.get()
 users_data = users_ref.get()
 
 @app.route("/model",methods=["POST","GET"])
-
 def model3():
   if request.method == "POST":
       try:
@@ -184,3 +198,6 @@ def tracking(user_id):
 #   if request.method == "GET":
 #     # lista os formulários preenchidos
 #     return 
+
+if __name__ == "__main__":
+  app.run(port=environ.get('API_PORT'))

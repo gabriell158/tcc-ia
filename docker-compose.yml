@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-    command: flask --debug run --host=0.0.0.0
+    command: python3 app.py
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
