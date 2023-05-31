@@ -34,14 +34,14 @@ models_ref = db.collection(u'Models')
 trackings_ref = db.collection(u'Trackings')
 bucket = storage.bucket()
 storage_models = ['cat_normal_definition.model', 'num_normalizer.model', 'data_kmeans_model.pkl']
-app = Flask(__name__)
+application = Flask(__name__)
 user_forms_ref = db.collection(u'UserForms')
 users_ref = db.collection(u'Users')
 forms_ref = db.collection(u'Forms')
 forms_data = forms_ref.get()
 users_data = users_ref.get()
 
-@app.route("/model",methods=["POST","GET"])
+@application.route("/model",methods=["POST","GET"])
 def model3():
   if request.method == "POST":
       try:
@@ -95,7 +95,7 @@ def model3():
         data.append(doc.to_dict())
     return data
 
-@app.route("/model/<string:model_id>",methods=["POST","DELETE"])
+@application.route("/model/<string:model_id>",methods=["POST","DELETE"])
 def model2(model_id):
   document_ref = models_ref.document(model_id)
   document = document_ref.get()
@@ -124,7 +124,7 @@ def model2(model_id):
     else:
       return (f"Modelo com ID {model_id} não encontrado.", 404)
 
-@app.route("/tracking/<string:user_id>",methods=["POST"])
+@application.route("/tracking/<string:user_id>",methods=["POST"])
 def tracking(user_id):
   if request.method == "POST":
     #Não vamos acumular respostas
@@ -193,11 +193,11 @@ def tracking(user_id):
     return response
 
 # Verificar necessidade desse request
-# @app.route("/form",methods=["GET"])
+# @application.route("/form",methods=["GET"])
 # def form():
 #   if request.method == "GET":
 #     # lista os formulários preenchidos
 #     return 
 
 if __name__ == "__main__":
-  app.run(port=environ.get('API_PORT'))
+  application.run(port=environ.get('API_PORT'))
