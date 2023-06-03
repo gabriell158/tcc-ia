@@ -10,24 +10,38 @@ from src.AI.new_student import cluster_inference
 from src.AI.reliability import reliability
 from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score
+from dotenv import load_dotenv
+from os import environ
+load_dotenv()
 
+my_credentials = {
+  "type": environ.get('type'),
+  "project_id": environ.get('project_id'),
+  "private_key_id": environ.get('private_key_id'),
+  "private_key": environ.get('private_key').replace(r'\n', '\n'),
+  "client_email": environ.get('client_email'),
+  "client_id": environ.get('client_id'),
+  "auth_uri": environ.get('auth_uri'),
+  "token_uri": environ.get('token_uri'),
+  "auth_provider_x509_cert_url": environ.get('auth_provider_x509_cert_url'),
+  "client_x509_cert_url": environ.get('client_x509_cert_url'),
+}
 
-cred = credentials.Certificate('tcc-mental-health-credentials.json')
+cred = credentials.Certificate(my_credentials)
 firebase_admin.initialize_app(cred, {'storageBucket': 'tcc-mental-health.appspot.com'})
 db = firestore.client()
 models_ref = db.collection(u'Models')
 trackings_ref = db.collection(u'Trackings')
 bucket = storage.bucket()
 storage_models = ['cat_normal_definition.model', 'num_normalizer.model', 'data_kmeans_model.pkl']
-app = Flask(__name__)
+application = Flask(__name__)
 user_forms_ref = db.collection(u'UserForms')
 users_ref = db.collection(u'Users')
 forms_ref = db.collection(u'Forms')
 forms_data = forms_ref.get()
 users_data = users_ref.get()
 
-@app.route("/model",methods=["POST","GET"])
-
+@application.route("/model",methods=["POST","GET"])
 def model3():
   if request.method == "POST":
       try:
@@ -81,7 +95,7 @@ def model3():
         data.append(doc.to_dict())
     return data
 
-@app.route("/model/<string:model_id>",methods=["POST","DELETE"])
+@application.route("/model/<string:model_id>",methods=["POST","DELETE"])
 def model2(model_id):
   document_ref = models_ref.document(model_id)
   document = document_ref.get()
@@ -110,7 +124,7 @@ def model2(model_id):
     else:
       return (f"Modelo com ID {model_id} não encontrado.", 404)
 
-@app.route("/tracking/<string:user_id>",methods=["POST"])
+@application.route("/tracking/<string:user_id>",methods=["POST"])
 def tracking(user_id):
   if request.method == "POST":
     #Não vamos acumular respostas
@@ -144,8 +158,6 @@ def tracking(user_id):
       user['A9'], user['D10'], user['S11'], user['S12'], user['D13'], user['S14'], user['A15'], user['D16'], user['D17'],
       user['S18'], user['A19'], user['A20'], user['D21']
     )
-    reli = reliability()
-
 
     query = models_ref.get()   
     data = []
@@ -159,7 +171,6 @@ def tracking(user_id):
     tracking = [tracking_data["anxiety"], tracking_data["depression"], tracking_data["stress"]]
     
     tracking_obj = {
-      "reliability": reli,
        "anxiety": {
         "level": tracking[0]
       },
@@ -168,23 +179,25 @@ def tracking(user_id):
       },
        "stress": {
         "level": tracking[2]
-      }
-
+      },
+      "reliability": 1
      }
     response = {
           u'date': datetime.now(),
           u'userId': user_id,
           u'anxiety': tracking_obj["anxiety"],
           u'depression': tracking_obj["depression"],
-          u'stress': tracking_obj["stress"],
-          u'precision': float(tracking_obj["reliability"])
+          u'stress': tracking_obj["stress"]
         }
     trackings_ref.add(response)
-    return reli
+    return response
 
 # Verificar necessidade desse request
-# @app.route("/form",methods=["GET"])
+# @application.route("/form",methods=["GET"])
 # def form():
 #   if request.method == "GET":
 #     # lista os formulários preenchidos
 #     return 
+
+if __name__ == "__main__":
+  application.run(port=environ.get('API_PORT'))

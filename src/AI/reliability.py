@@ -38,6 +38,5 @@ def reliability():
     # Scoring
     scoring = ['precision_macro','recall_macro']
     scores_cross = cross_validate(kmeans_tree_cross, normalized_attr_df, normalized_classes, cv=3, scoring = scoring)
-    #'Especificidade: ' + str(scores_cross['test_precision_macro'].mean()) + '\n' + 'Sensibilidade : ' + str(scores_cross['test_recall_macro'].mean())
-    test_precision = scores_cross['test_precision_macro'].mean()*100
-    return str(round(test_precision, 2))
+
+    return 'Especificidade: ' + str(scores_cross['test_precision_macro'].mean()) + '\n' + 'Sensibilidade : ' + str(scores_cross['test_recall_macro'].mean())

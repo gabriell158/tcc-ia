@@ -3,7 +3,6 @@ from src.AI.elbow import elbow_method
 from src.AI.raw_data import get_categorical_data, get_numeric_data
 from src.AI.denormalize import denormalize_data
 from src.AI.centroids import get_centroids
-from src.AI.silhouette import silhouette
 from pickle import dump
 import pandas as pd
 
@@ -47,7 +46,6 @@ def train(data):
     numeric_normalized, numeric = normalize_numeric_data(numeric_columns)
     normalized_data, numeric_model = normalize_data(numeric_columns, numeric_normalized, categorical_normalized)
     kmeans_model = elbow_method(normalized_data, categorical_columns)
-    #kmeans_teste = silhouette(normalized_data)
     denormalized_clusters = denormalize_data(kmeans_model, normalized_data, categorical_normalized, categorical_columns, numeric, numeric_model)
     cluster_centers = get_centroids(kmeans_model)
 

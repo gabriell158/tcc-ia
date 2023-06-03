@@ -5,7 +5,7 @@ import math
 
 def elbow_method(data_normalized, raw_data):
     distortions = []
-    K = range(1, 30)
+    K = range(1, len(data_normalized) + 1)
     kmeans_models = {}
     shape = raw_data.shape[0]
     data_normalized = data_normalized.astype(float)
