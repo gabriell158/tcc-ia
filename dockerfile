@@ -1,4 +1,4 @@
-FROM python:3.8.10
+FROM python:3.11
 
 WORKDIR /usr/apps/tcc
 
@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE ${API_PORT}
 
-CMD ["python3","app.py"]
+CMD ["python3","application.py"]

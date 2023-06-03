@@ -15,16 +15,16 @@ from os import environ
 load_dotenv()
 
 my_credentials = {
-  "type": environ.get('type'),
-  "project_id": environ.get('project_id'),
-  "private_key_id": environ.get('private_key_id'),
-  "private_key": environ.get('private_key').replace(r'\n', '\n'),
-  "client_email": environ.get('client_email'),
-  "client_id": environ.get('client_id'),
-  "auth_uri": environ.get('auth_uri'),
-  "token_uri": environ.get('token_uri'),
-  "auth_provider_x509_cert_url": environ.get('auth_provider_x509_cert_url'),
-  "client_x509_cert_url": environ.get('client_x509_cert_url'),
+  "type": environ.get('TYPE'),
+  "project_id": environ.get('PROJECT_ID'),
+  "private_key_id": environ.get('PRIVATE_KEY_ID'),
+  "private_key": environ.get('PRIVATE_KEY').replace(r'\n', '\n'),
+  "client_email": environ.get('CLIENT_EMAIL'),
+  "client_id": environ.get('CLIENT_ID'),
+  "auth_uri": environ.get('AUTH_URI'),
+  "token_uri": environ.get('TOKEN_URI'),
+  "auth_provider_x509_cert_url": environ.get('AUTH_PROVIDER_X509_CERT_URL'),
+  "client_x509_cert_url": environ.get('CLIENT_X509_CERT_URL'),
 }
 
 cred = credentials.Certificate(my_credentials)
@@ -200,4 +200,4 @@ def tracking(user_id):
 #     return 
 
 if __name__ == "__main__":
-  application.run(port=environ.get('API_PORT'))
+  application.run(port=environ.get('API_PORT'),debug=environ.get('DEBUG'))
