@@ -1,0 +1,33 @@
+Create a tracking for a user
+---
+parameters:
+  - name: user_id
+    in: path
+    type: string
+    required: true
+responses:
+  200:
+    description: Model created successfully.
+    schema:
+      type: object
+      properties:
+        anxiety:
+          type: string
+          description: Model ID.
+          example: Extremely Severe
+        depression:
+          type: string
+          description: Model ID.
+          example: Extremely Severe
+        stress:
+          type: string
+          description: Model ID.
+          example: Extremely Severe
+        date:
+          type: string
+          description: Creation date.
+          example: 2023-05-20 14:30:00
+        precision:
+          type: number
+          description: Creation date.
+          example: 37.04

@@ -9,6 +9,7 @@ from datetime import datetime
 from src.AI.new_student import cluster_inference
 from dotenv import load_dotenv
 from os import environ
+from flasgger.utils import swag_from
 
 load_dotenv()
 
@@ -60,46 +61,10 @@ forms_data = forms_ref.get()
 users_data = users_ref.get()
 
 
-@application.route("/model", methods=["POST", "GET"])
+@application.route("/model", endpoint="model", methods=["POST", "GET"])
+@swag_from("src/swagger/create_model.yml", endpoint="model", methods=["POST"])
+@swag_from("src/swagger/get_models.yml", endpoint="model", methods=["GET"])
 def model3():
-    """
-    Create a model.
-    ---
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            Age:
-              type: integer
-              description: Age of the user.
-              example: 30
-            Gender:
-              type: string
-              description: Gender of the user.
-              example: Male
-            # Add other properties as needed
-    responses:
-      200:
-        description: Model created successfully.
-        schema:
-          type: object
-          properties:
-            id:
-              type: string
-              description: Model ID.
-              example: 12345
-            date:
-              type: string
-              description: Creation date.
-              example: 2023-05-20 14:30:00
-            selected:
-              type: boolean
-              description: Model selection status.
-              example: false
-    """
     if request.method == "POST":
         try:
             users = []
@@ -148,7 +113,11 @@ def model3():
         return data
 
 
-@application.route("/model/<string:model_id>", methods=["POST", "DELETE"])
+@application.route(
+    "/model/<string:model_id>", endpoint="model/id", methods=["POST", "DELETE"]
+)
+@swag_from("src/swagger/delete_model.yml", endpoint="model/id", methods=["POST"])
+@swag_from("src/swagger/select_model.yml", endpoint="model/id", methods=["DELETE"])
 def model2(model_id):
     document_ref = models_ref.document(model_id)
     document = document_ref.get()
@@ -180,7 +149,8 @@ def model2(model_id):
             return (f"Modelo com ID {model_id} não encontrado.", 404)
 
 
-@application.route("/tracking/<string:user_id>", methods=["POST"])
+@application.route("/tracking/<string:user_id>", endpoint="tracking", methods=["POST"])
+@swag_from("src/swagger/tracking.yml", endpoint="tracking", methods=["POST"])
 def tracking(user_id):
     if request.method == "POST":
         # Não vamos acumular respostas
@@ -269,6 +239,7 @@ def tracking(user_id):
         }
         trackings_ref.add(response)
         return response
+
 
 if __name__ == "__main__":
     application.run(

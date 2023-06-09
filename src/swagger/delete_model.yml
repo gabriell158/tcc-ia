@@ -1,0 +1,20 @@
+Delete a model
+---
+parameters:
+  - name: model_id
+    in: path
+    type: string
+    required: true
+responses:
+  200:
+    description: Model created successfully.
+    schema:
+      type: string
+      description: Model ID.
+      example: Modelo com ID {model_id} excluído com sucesso.
+  404:
+    description: Model created successfully.
+    schema:
+      type: string
+      description: Model ID.
+      example: Modelo com ID {model_id} não encontrado.

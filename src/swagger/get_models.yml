@@ -1,0 +1,63 @@
+Get all trained models
+---
+responses:
+  200:
+    description: Model created successfully.
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          clusters:
+            type: array
+            items:
+              type: object
+              properties:
+                age:
+                  type: number
+                  description: Model ID.
+                  example: 22
+                anxiety:
+                  type: string
+                  description: Model ID.
+                  example: Moderate
+                children:
+                  type: boolean
+                  description: Model ID.
+                  example: false
+                depression:
+                  type: string
+                  description: Model ID.
+                  example: Normal
+                gender:
+                  type: string
+                  description: Model ID.
+                  example: Feminino
+                grad_period:
+                  type: number
+                  description: Model ID.
+                  example: 5
+                marital:
+                  type: string
+                  description: Model ID.
+                  example: Solteira(o)
+                number:
+                  type: number
+                  description: Model ID.
+                  example: 0
+                ocupation:
+                  type: string
+                  description: Model ID.
+                  example: Estudante
+                stress:
+                  type: string
+                  description: Model ID.
+                  example: Normal
+          date:
+            type: string
+            description: Creation date.
+            example: 2023-05-20 14:30:00
+          selected:
+            type: boolean
+            description: Model selection status.
+            example: false
