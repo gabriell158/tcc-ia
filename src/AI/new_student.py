@@ -86,6 +86,7 @@ def cluster_inference(
   joined_data = joined_data.fillna(0)
   
   cluster_model = load(open('data_kmeans_model.pkl', 'rb'))
+  print(len(joined_data.columns))
   #TODO: Retornar os dados do DASS além do cluster que pertence
   designated_cluster = cluster_model.predict(joined_data.values.tolist())
 
