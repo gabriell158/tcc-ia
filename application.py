@@ -7,7 +7,9 @@ import traceback
 from firebase_admin import firestore, credentials, storage
 from datetime import datetime
 from src.AI.new_student import cluster_inference
+from src.AI.duplicated import formatting_data
 from dotenv import load_dotenv
+from src.AI.reliability import reliability
 from os import environ
 from flasgger.utils import swag_from
 
@@ -116,8 +118,8 @@ def model3():
 @application.route(
     "/model/<string:model_id>", endpoint="model/id", methods=["POST", "DELETE"]
 )
-@swag_from("src/swagger/delete_model.yml", endpoint="model/id", methods=["POST"])
-@swag_from("src/swagger/select_model.yml", endpoint="model/id", methods=["DELETE"])
+@swag_from("src/swagger/select_model.yml", endpoint="model/id", methods=["POST"])
+@swag_from("src/swagger/delete_model.yml", endpoint="model/id", methods=["DELETE"])
 def model2(model_id):
     document_ref = models_ref.document(model_id)
     document = document_ref.get()
@@ -153,93 +155,71 @@ def model2(model_id):
 @swag_from("src/swagger/tracking.yml", endpoint="tracking", methods=["POST"])
 def tracking(user_id):
     if request.method == "POST":
-        # Não vamos acumular respostas
         user_data = users_ref.get()
         user_data = user_data[0].to_dict()
         inference_data = []
         forms = {}
 
         for x in forms_data:
-            forms[x.id] = x.get("disorder")
-
+            forms[x.id] = x.get('disorder')
         user = {
-            "Age": user_data["Age"],
-            "Gender": user_data["Gender"],
-            "Marital_Status": user_data["Marital_Status"],
-            "University": user_data["University"],
-            "Course": user_data["Course"],
-            "Grad_Period": user_data["Grad_Period"],
-            "Ocupation": user_data["Ocupation"],
-            "Children": user_data["Children"],
+            'Age': user_data['Age'],
+            'Gender': user_data['Gender'],
+            'Marital_Status': user_data['Marital_Status'],
+            'University': user_data['University'],
+            'Course': user_data['Course'],
+            'Grad_Period': user_data['Grad_Period'],
+            'Ocupation': user_data['Ocupation'],
+            'Children': user_data['Children']
         }
-
-        user_forms = user_data["UserForms"]["Forms"]
+            
+        user_forms = user_data['UserForms']['Forms']
         for y in user_forms:
-            user[forms[y["formId"]]] = y["answer"]
+            user[forms[y['formId']]] = y['answer']
         inference_data.append(user)
 
         student_tracking = cluster_inference(
-            user["Gender"],
-            user["Marital_Status"],
-            user["University"],
-            user["Ocupation"],
-            user["Children"],
-            user["Age"],
-            user["Grad_Period"],
-            user["S1"],
-            user["A2"],
-            user["D3"],
-            user["A4"],
-            user["D5"],
-            user["S6"],
-            user["A7"],
-            user["S8"],
-            user["A9"],
-            user["D10"],
-            user["S11"],
-            user["S12"],
-            user["D13"],
-            user["S14"],
-            user["A15"],
-            user["D16"],
-            user["D17"],
-            user["S18"],
-            user["A19"],
-            user["A20"],
-            user["D21"],
+            user['Gender'] ,user['Marital_Status'], user['University'], user['Ocupation'], user['Children'], user['Age'],
+            user['Grad_Period'], user['S1'], user['A2'], user['D3'], user['A4'], user['D5'], user['S6'], user['A7'], user['S8'],
+            user['A9'], user['D10'], user['S11'], user['S12'], user['D13'], user['S14'], user['A15'], user['D16'], user['D17'],
+            user['S18'], user['A19'], user['A20'], user['D21']
         )
 
-        query = models_ref.get()
+        reli = reliability()
+
+        query = models_ref.get()   
         data = []
         for doc in query:
             doc_data = doc.to_dict()
-            clusters_data = doc_data["clusters"]
+            clusters_data = doc_data['clusters']
             for cluster in clusters_data:
                 data.append(cluster)
 
         tracking_data = data[int(student_tracking[1])]
-        tracking = [
-            tracking_data["anxiety"],
-            tracking_data["depression"],
-            tracking_data["stress"],
-        ]
-
+        tracking = [tracking_data["anxiety"], tracking_data["depression"], tracking_data["stress"]]
+        
         tracking_obj = {
-            "anxiety": {"level": tracking[0]},
-            "depression": {"level": tracking[1]},
-            "stress": {"level": tracking[2]},
-            "reliability": 1,
+            "reliability": reli,
+            "anxiety": {
+                "level": tracking[0]
+            },
+            "depression": {
+                "level": tracking[1]
+            },
+            "stress": {
+                "level": tracking[2]
+            }
         }
         response = {
-            "date": datetime.now(),
-            "userId": user_id,
-            "anxiety": tracking_obj["anxiety"],
-            "depression": tracking_obj["depression"],
-            "stress": tracking_obj["stress"],
+            u'date': datetime.now(),
+            u'userId': user_id,
+            u'anxiety': tracking_obj["anxiety"],
+            u'depression': tracking_obj["depression"],
+            u'stress': tracking_obj["stress"],
+            u'reliability': str(tracking_obj["reliability"])
         }
         trackings_ref.add(response)
         return response
-
 
 if __name__ == "__main__":
     application.run(

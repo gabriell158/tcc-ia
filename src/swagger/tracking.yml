@@ -27,7 +27,7 @@ responses:
           type: string
           description: Creation date.
           example: 2023-05-20 14:30:00
-        precision:
+        reliability:
           type: number
           description: Creation date.
           example: 37.04
