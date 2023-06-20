@@ -56,17 +56,16 @@ swagger_config = {
     "specs_route": "/",
 }
 Swagger(application, config=swagger_config)
-user_forms_ref = db.collection("UserForms")
-users_ref = db.collection("Users")
-forms_ref = db.collection("Forms")
-forms_data = forms_ref.get()
-users_data = users_ref.get()
-
 
 @application.route("/model", endpoint="model", methods=["POST", "GET"])
 @swag_from("src/swagger/create_model.yml", endpoint="model", methods=["POST"])
 @swag_from("src/swagger/get_models.yml", endpoint="model", methods=["GET"])
 def model3():
+    users_ref = db.collection("Users")
+    forms_ref = db.collection("Forms")
+    forms_data = forms_ref.get()
+    users_data = users_ref.get()
+
     if request.method == "POST":
         try:
             users = []
@@ -111,7 +110,11 @@ def model3():
         docs = models_ref.get()
         data = []
         for doc in docs:
-            data.append(doc.to_dict())
+            model = {
+                'id': doc.id,
+                'model': doc.to_dict()
+            }
+            data.append(model)
         return data
 
 
@@ -121,6 +124,7 @@ def model3():
 @swag_from("src/swagger/delete_model.yml", endpoint="model/id", methods=["POST"])
 @swag_from("src/swagger/select_model.yml", endpoint="model/id", methods=["DELETE"])
 def model2(model_id):
+
     document_ref = models_ref.document(model_id)
     document = document_ref.get()
     if request.method == "POST":
@@ -154,6 +158,10 @@ def model2(model_id):
 @application.route("/tracking/<string:user_id>", endpoint="tracking", methods=["POST"])
 @swag_from("src/swagger/tracking.yml", endpoint="tracking", methods=["POST"])
 def tracking(user_id):
+    users_ref = db.collection("Users")
+    forms_ref = db.collection("Forms")
+    forms_data = forms_ref.get()
+
     if request.method == "POST":
     #Não vamos acumular respostas
         user_data = users_ref.get()
