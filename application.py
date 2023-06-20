@@ -121,8 +121,8 @@ def model3():
 @application.route(
     "/model/<string:model_id>", endpoint="model/id", methods=["POST", "DELETE"]
 )
-@swag_from("src/swagger/delete_model.yml", endpoint="model/id", methods=["POST"])
-@swag_from("src/swagger/select_model.yml", endpoint="model/id", methods=["DELETE"])
+@swag_from("src/swagger/select_model.yml", endpoint="model/id", methods=["POST"])
+@swag_from("src/swagger/delete_model.yml", endpoint="model/id", methods=["DELETE"])
 def model2(model_id):
 
     document_ref = models_ref.document(model_id)
@@ -163,7 +163,6 @@ def tracking(user_id):
     forms_data = forms_ref.get()
 
     if request.method == "POST":
-    #Não vamos acumular respostas
         user_data = users_ref.get()
         user_data = user_data[0].to_dict()
         inference_data = []
