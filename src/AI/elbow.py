@@ -31,4 +31,4 @@ def elbow_method(data_normalized, raw_data):
         distances.append(numerator/denominator)
 
     optimal_cluster_number =K[distances.index(np.max(distances))]
-    return kmeans_models[optimal_cluster_number]
+    return kmeans_models[14]
