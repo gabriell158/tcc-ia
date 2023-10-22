@@ -38,12 +38,12 @@ def normalize_numeric_data(numeric_columns):
     scaler = MinMaxScaler()
     numeric_fit = scaler.fit(numeric_columns)
     normalized_numeric = scaler.fit_transform(numeric_columns)
-    dump(numeric_fit,open('num_normalizer.model', 'wb'))
+    dump(numeric_fit,open('num_normalizer_joined_forms.model', 'wb'))
     return normalized_numeric, numeric_fit
 
 def normalize_categorical_data(categorical_columns):
     normalized_categorical = pd.get_dummies(categorical_columns, prefix_sep = '&')
-    f = open('cat_normal_definition.model', 'w')
+    f = open('cat_normal_definition_joined_forms.model', 'w')
     f.write(','.join(str(s) for s in normalized_categorical.columns.values.tolist()))
     f.close()
     return normalized_categorical

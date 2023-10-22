@@ -11,6 +11,7 @@ from src.AI.duplicated import formatting_data
 from dotenv import load_dotenv
 from src.AI.reliability import reliability
 from os import environ
+from src.AI.dass_sum import classify_depression_score, classify_anxiety_score, classify_stress_score
 from flasgger.utils import swag_from
 
 load_dotenv()
@@ -193,6 +194,17 @@ def tracking(user_id):
             user['S18'], user['A19'], user['A20'], user['D21']
         )
 
+        ##DASS-21 TRACKING
+        #Dep: d3, d5, d10, d13, d16, d17, d21
+        #Anx: a2, a4, a7, a9, a15, a19, a20
+        #Str: s1, s6, s8, s11, s12, s14, s18
+
+        dep_sum = user["D3"] + user["D5"] + user["D10"] + user["D13"] + user["D16"] + user["D17"] + user["D21"]
+        dass_dep_tracking = classify_depression_score(dep_sum)
+        anx_sum = user["A2"] + user["A4"] + user["A7"] + user["A9"] + user["A15"] + user["A19"] + user["A20"]
+        dass_anx_tracking = classify_anxiety_score(anx_sum)
+        str_sum = user["S1"] + user["S6"] + user["S8"] + user["S11"] + user["S12"] + user["S14"] + user["S18"]
+        dass_str_tracking = classify_stress_score(str_sum)
         reli = reliability()
 
         query = models_ref.get()   
@@ -224,7 +236,10 @@ def tracking(user_id):
             u'anxiety': tracking_obj["anxiety"],
             u'depression': tracking_obj["depression"],
             u'stress': tracking_obj["stress"],
-            u'reliability': str(tracking_obj["reliability"])
+            u'reliability': str(tracking_obj["reliability"]),
+            u'dass_dep': dass_dep_tracking,
+            u'dass_anx': dass_anx_tracking,
+            u'dass_str': dass_str_tracking
         }
         trackings_ref.add(response)
         return response

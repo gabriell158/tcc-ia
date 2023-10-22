@@ -1,3 +1,5 @@
+import numpy as np
+
 import pandas as pd
 from src.AI.dass_sum import classify_anxiety_score, classify_depression_score, classify_stress_score
 
@@ -20,6 +22,14 @@ def denormalize_data(dados_kmeans_model, dados_norm, colunas_cat_norm, colunas_c
         clusters_description = pd.concat([clusters_description, pd.DataFrame([cluster_desc])], ignore_index=True)
 
     cluster_data=pd.DataFrame(dados_kmeans_model.cluster_centers_, columns=dados_norm.columns)
+    centroids = dados_kmeans_model.cluster_centers_
+    cluster_variances = np.var(centroids, axis=0)
+    coluna_com_maior_variancia = np.argmax(cluster_variances)
+    nome_coluna_maior_variancia = cluster_data.columns[coluna_com_maior_variancia]
+
+    print("-----------------cluster data---------------")
+    print(f"A coluna com a maior variância nos clusters é: {nome_coluna_maior_variancia}")
+    print(cluster_variances)
 
     denormalized_data = dados_normalizer.inverse_transform(cluster_data[numeric_normalized.columns])
     denormalized_data = pd.DataFrame(denormalized_data, columns = numeric_normalized.columns).round(0).astype(int)
