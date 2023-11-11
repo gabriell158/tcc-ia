@@ -11,6 +11,7 @@ from src.AI.duplicated import formatting_data
 from dotenv import load_dotenv
 from src.AI.reliability import reliability
 from os import environ
+from src.AI.dass_sum import *
 from flasgger.utils import swag_from
 
 load_dotenv()
@@ -79,8 +80,6 @@ def model3():
                     "Age": x.get("Age"),
                     "Gender": x.get("Gender"),
                     "Marital_Status": x.get("Marital_Status"),
-                    "University": x.get("University"),
-                    "Course": x.get("Course"),
                     "Grad_Period": x.get("Grad_Period"),
                     "Ocupation": x.get("Ocupation"),
                     "Children": x.get("Children"),
@@ -174,8 +173,6 @@ def tracking(user_id):
             'Age': user_data['Age'],
             'Gender': user_data['Gender'],
             'Marital_Status': user_data['Marital_Status'],
-            'University': user_data['University'],
-            'Course': user_data['Course'],
             'Grad_Period': user_data['Grad_Period'],
             'Ocupation': user_data['Ocupation'],
             'Children': user_data['Children']
@@ -187,13 +184,23 @@ def tracking(user_id):
         inference_data.append(user)
 
         student_tracking = cluster_inference(
-            user['Gender'] ,user['Marital_Status'], user['University'], user['Ocupation'], user['Children'], user['Age'],
+            user['Gender'] ,user['Marital_Status'], user['Ocupation'], user['Children'], user['Age'],
             user['Grad_Period'], user['S1'], user['A2'], user['D3'], user['A4'], user['D5'], user['S6'], user['A7'], user['S8'],
             user['A9'], user['D10'], user['S11'], user['S12'], user['D13'], user['S14'], user['A15'], user['D16'], user['D17'],
             user['S18'], user['A19'], user['A20'], user['D21']
         )
 
-        reli = reliability()
+        ##DASS-21 TRACKING
+        #Dep: d3, d5, d10, d13, d16, d17, d21
+        #Anx: a2, a4, a7, a9, a15, a19, a20
+        #Str: s1, s6, s8, s11, s12, s14, s18
+
+        dep_sum = user["D3"] + user["D5"] + user["D10"] + user["D13"] + user["D16"] + user["D17"] + user["D21"]
+        dass_dep_tracking = classify_depression_score(dep_sum)
+        anx_sum = user["A2"] + user["A4"] + user["A7"] + user["A9"] + user["A15"] + user["A19"] + user["A20"]
+        dass_anx_tracking = classify_anxiety_score(anx_sum)
+        str_sum = user["S1"] + user["S6"] + user["S8"] + user["S11"] + user["S12"] + user["S14"] + user["S18"]
+        dass_str_tracking = classify_stress_score(str_sum)
 
         query = models_ref.get()   
         data = []
@@ -207,7 +214,6 @@ def tracking(user_id):
         tracking = [tracking_data["anxiety"], tracking_data["depression"], tracking_data["stress"]]
         
         tracking_obj = {
-            "reliability": reli,
             "anxiety": {
                 "level": tracking[0]
             },
@@ -224,7 +230,9 @@ def tracking(user_id):
             u'anxiety': tracking_obj["anxiety"],
             u'depression': tracking_obj["depression"],
             u'stress': tracking_obj["stress"],
-            u'reliability': str(tracking_obj["reliability"])
+            u'DASS_Dep': dass_dep_tracking,
+            u'DASS_Anx': dass_anx_tracking,
+            u'DASS_Str': dass_str_tracking
         }
         trackings_ref.add(response)
         return response

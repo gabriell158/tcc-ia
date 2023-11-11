@@ -10,7 +10,6 @@ def train(data):
     gender = data['Gender']
     age = data['Age']
     marital = data['Marital_Status']
-    university = data['University']
     ocupation = data['Ocupation']
     children = data['Children']
     grad_period = data['Grad_Period']
@@ -37,10 +36,10 @@ def train(data):
     d21 =  data['D21']
     
     num_columns = ['Age', 'Grad_Period', 'S1', 'A2', 'D3', 'A4', 'D5', 'S6', 'A7', 'S8', 'A9', 'D10', 'S11', 'S12', 'D13', 'S14', 'A15', 'D16', 'D17', 'S18', 'A19', 'A20', 'D21']
-    cat_cols=['Gender', 'Marital_Status','University','Ocupation','Children']
+    cat_cols=['Gender', 'Marital_Status','Ocupation','Children']
     new_df = cat_cols + num_columns
 
-    categorical_columns = get_categorical_data(gender, marital, university, ocupation, children)
+    categorical_columns = get_categorical_data(gender, marital, ocupation, children)
     numeric_columns = get_numeric_data(age, grad_period, s1, a2, d3, a4, d5, s6, a7, s8, a9, d10, s11, s12, d13, s14, a15, d16, d17, s18, a19, a20, d21)
     categorical_normalized = normalize_categorical_data(categorical_columns)
     numeric_normalized, numeric = normalize_numeric_data(numeric_columns)
@@ -56,18 +55,17 @@ def train(data):
     pkl_file = pd.read_pickle('normalized_data.pkl')
     pkl_file.to_csv('normalized_data.csv')
 
-    
     response = []
     i = 0
     for cluster in denormalized_clusters.values.tolist():        
         response.append({
             'number': i,
-            'gender': cluster[-34],
-            'marital': cluster[-33],
-            'ocupation': cluster[-31],
-            'children': cluster[-30],
-            'age': cluster[-29],
-            'grad_period': cluster[-28],
+            'gender': cluster[-33],
+            'marital': cluster[-32],
+            'ocupation': cluster[-30],
+            'children': cluster[-29],
+            'age': cluster[-28],
+            'grad_period': cluster[-27],
             'depression': cluster[-3],
             'anxiety': cluster[-2],
             'stress': cluster[-1]

@@ -1,13 +1,12 @@
 import pandas as pd
 from pickle import load
 NUM_COLUMNS = ['Age', 'Grad_Period', 'S1', 'A2', 'D3', 'A4', 'D5', 'S6', 'A7', 'S8', 'A9', 'D10', 'S11', 'S12', 'D13', 'S14', 'A15', 'D16', 'D17', 'S18', 'A19', 'A20', 'D21']
-CAT_COLUMNS = ['Gender', 'Marital_Status','University','Ocupation','Children']
+CAT_COLUMNS = ['Gender', 'Marital_Status','Ocupation','Children']
 NEW_DF = CAT_COLUMNS + NUM_COLUMNS
 
 def cluster_inference(
     gender = '',
     marital_status = '',
-    university = '',
     ocupation = '',
     children = '',
     age = '',
@@ -37,7 +36,6 @@ def cluster_inference(
   novo_aluno = {
       'Gender': [gender],
       'Marital_Status': [marital_status],
-      'University': [university],
       'Ocupation': [ocupation],
       'Children': [children],
       'Age': [age],
