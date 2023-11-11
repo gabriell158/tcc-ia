@@ -2,6 +2,7 @@ from firebase_admin import firestore, credentials, initialize_app
 import pandas as pd
 from datetime import datetime
 import time
+from src.AI.dass_sum import *
 
 cred = credentials.Certificate('tcc-mental-health-credentials.json')
 initialize_app(cred)
@@ -11,10 +12,101 @@ forms_ref = db.collection(u'Forms')
 trackings_ref = db.collection(u'Trackings')
 
 user_forms = []
-user_data = pd.read_csv('formated_data.csv')
+user_data = pd.read_csv('joined_forms.csv')
 user_data['Dob'].fillna('01/01/1970', inplace=True)
 users = {}
 forms = {}
+
+# data =  [
+#     {
+#         "disorder": "S1",
+#         "question": "Achei difícil me acalmar"
+#     },
+#     {
+#         "disorder": "A2",
+#         "question": "Senti minha boca seca"
+#     },
+#     {
+#         "disorder": "D3",
+#         "question": "Não consegui vivenciar nenhum sentimento positivo"
+#     },
+#     {
+#         "disorder": "A4",
+#         "question": "Tive dificuldade em respirar em alguns momentos (ex. respiração ofegante, falta de ar, sem ter feito nenhum esforço físico)"
+#     },
+#     {
+#         "disorder": "D5",
+#         "question": "Achei difícil ter iniciativa para fazer as coisas"
+#     },
+#     {
+#         "disorder": "S6",
+#         "question": "Tive a tendência de reagir de forma exagerada às situações"
+#     },
+#     {
+#         "disorder": "A7",
+#         "question": "Senti tremores (ex. nas mãos)"
+#     },
+#     {
+#         "disorder": "S8",
+#         "question": "Senti que estava sempre nervoso"
+#     },
+#     {
+#         "disorder": "A9",
+#         "question": "Preocupei-me com situações em que eu pudesse entrar em pânico e parecesse ridículo (a)"
+#     },
+#     {
+#         "disorder": "D10",
+#         "question": "Senti que não tinha nada a desejar"
+#     },
+#     {
+#         "disorder": "S11",
+#         "question": "Senti-me agitado"
+#     },
+#     {
+#         "disorder": "S12",
+#         "question": "Achei difícil relaxar"
+#     },
+#     {
+#         "disorder": "D13",
+#         "question": "Senti-me depressivo (a) e sem ânimo"
+#     },
+#     {
+#         "disorder": "S14",
+#         "question": "Fui intolerante com as coisas que me impediam de continuar o que eu estava fazendo"
+#     },
+#     {
+#         "disorder": "A15",
+#         "question": "Senti que ia entrar em pânico"
+#     },
+#     {
+#         "disorder": "D16",
+#         "question": "Não consegui me entusiasmar com nada"
+#     },
+#     {
+#         "disorder": "D17",
+#         "question": "Senti que não tinha valor como pessoa"
+#     },
+#     {
+#         "disorder": "S18",
+#         "question": "Senti que estava um pouco emotivo/sensível demais"
+#     },
+#     {
+#         "disorder": "A19",
+#         "question": "Sabia que meu coração estava alterado mesmo não tendo feito nenhum esforço físico (ex. aumento da frequência cardíaca, disritmia cardíaca)"
+#     },
+#     {
+#         "disorder": "A20",
+#         "question": "Senti medo sem motivo"
+#     },
+#     {
+#         "disorder": "D21",
+#         "question": "Senti que a vida não tinha sentido"
+#     }    
+# ]
+
+# for item in data:
+#        doc_ref = forms_ref.add(item)
+
 
 docs = forms_ref.get()
 for doc in docs:
@@ -36,7 +128,7 @@ for index in range(0, len(user_data['Stamp'])):
         u'Surname': '',
         u'Terms': user_data['Terms'][index],
         u'UserForms': {
-            u'Stamp': datetime.fromtimestamp(time.mktime(datetime.strptime(user_data['Stamp'][index], '%d/%m/%Y %H:%M:%S').timetuple())),
+            u'Stamp': datetime.fromtimestamp(time.mktime(datetime.strptime(user_data['Stamp'][index], '%d/%m/%Y %H:%M:%S').timetuple())),           
             u'Forms': [
                 {
                     u'formId': forms['S1'],
